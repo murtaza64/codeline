@@ -1,0 +1,1 @@
+"from django.db import models\nfrom django.contrib.auth.models import User\n\nclass Post(models.Model):\n    title = models.CharField(max_length=140)\n    body = models.TextField()\n    date = models.DateTimeField()\n    author = models.ForeignKey(User, default = 1, on_delete = models.CASCADE)\n    def __str__(self):\n        return self.title\n"

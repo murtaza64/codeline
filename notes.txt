@@ -1,0 +1,2 @@
+syntax: highlight.js
+text editor: ace

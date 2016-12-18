@@ -1,0 +1,20 @@
+{% for i, cell in post.1 %}
+    <!-- {% if cell.title%}
+      <div class="container-fluid">
+        <h5 style="margin-top: 0; margin-bottom: 5px;">{{cell.title}}</h5>
+      </div>
+    {% endif %} -->
+
+    {% if cell.type == 2 %}
+        <pre class="codecell"><div class="cellindex code">{{i}}{% if cell.title %} - {{cell.title}}{% endif %}</div><code class = "{{cell.lang}}">{{ cell.content }}</code></pre>
+    {% else %}
+      <div class="container-fluid cell text">
+        <div class="cellindex">
+            {{i}}{% if cell.title %} - {{cell.title}}{% endif %}
+        </div>
+        <p>
+            {{ cell.content|safe }}
+        </p> <!--TODO: make sure input is safe-->
+      </div>
+    {% endif %}
+{% endfor %}

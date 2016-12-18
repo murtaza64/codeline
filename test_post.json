@@ -1,0 +1,22 @@
+{
+  "cells":[
+    {
+      "type":0,
+      "lang":null,
+      "title":"",
+      "content":"hello world\nmy name is p\n"
+    },
+    {
+      "type":1,
+      "lang":null,
+      "title":"md",
+      "content":"##this is sparta \nand this is an axe:"
+    },
+    {
+      "type":2,
+      "lang":"c",
+      "title":"py",
+      "content":"int main(void){\n    printf(\"this code will crash\\n\");\n}"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{% extends "timeline/header.html" %}
+{% block head %}
+  <title>post list</title>
+{% endblock %}
+{% block lefttitle %}
+  <br>
+  <center>
+    <a class="title" href="/">
+      <h3>codeli.ne</h3>
+    </a>
+      <h5>&nbsp;</h5>
+  </center>
+{% endblock %}
+
+{% block sidebarlinks %}
+  {% include 'timeline/includes/sidebarlinks.html' %}
+{% endblock %}
+
+{% block content %}
+  <table style="font-size:12px;">
+    <tr>
+      <td class="postdate">id</td>
+      <td class="postdate">date</td>
+      <td class="postdate">author</td>
+      <td>title</td>
+    </tr>
+  {% for post in object_list %}
+    <tr>
+      <td class="postdate">{{post.id}}</td>
+      <td class="postdate">{{post.date|date:'Y-m-d H:m:s'}}</td>
+      <td class="postdate"><a class="datelink" href="/user/{{post.0.author}}">{{post.author}}</a></td>
+      <td><a class=subtle href = "/{{post.id}}">{{post.title}}</a></td>
+    </tr>
+    </p>
+  {% endfor %}
+</table>
+{% endblock %}

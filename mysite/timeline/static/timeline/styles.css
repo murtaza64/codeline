@@ -1,0 +1,54 @@
+a.subtle{
+  color: inherit;
+}
+a.subtle:hover{
+  text-decoration: none;
+  color:#888888;
+}
+a.title{
+  color: inherit;
+}
+a.title:hover{
+  color:#888888;
+  text-decoration: none;
+}
+p.subtitle{
+  color: #909090;
+  font-size: 16px;
+}
+a.subtitle{
+  color: #909090;
+  text-decoration: none;
+}
+a.subtitle:hover{
+  color:#a0a0a0;
+  text-decoration: none;
+}
+a.datelink{
+  text-decoration: none;
+  color:inherit;
+}
+a.datelink:hover{
+  text-decoration: none;
+  color:#b8b8b8;
+}
+#sidebar{
+  background-color: #f6f6f6;
+  border: none;
+  padding: 5px;
+  box-shadow: none;
+}
+.nav-pills li a{
+  padding:5px;
+  color: #333333;
+}
+.nav-pills li a:hover{
+  background-color: inherit;
+  color: #888888;
+}
+hr {
+  border-color: #d8d8d8;
+}
+td{
+  padding: 3px 8px;
+}

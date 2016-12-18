@@ -1,0 +1,35 @@
+{% extends "timeline/header.html" %}
+{% block head %}
+  <title>codeli.ne</title>
+{% endblock %}
+{% block lefttitle %}
+  <br>
+  <center>
+    <a class="title" href="/">
+      <h3>codeli.ne</h3>
+    </a>
+      <h5>&nbsp;</h5>
+  </center>
+{% endblock %}
+
+{% block sidebarlinks %}
+  {% include 'timeline/includes/sidebarlinks.html' %}
+{% endblock %}
+
+{% block content %}
+  {% for post in posts %}
+    <p class="posttitle">
+      <a class="title" href="/{{post.0.id}}">{{post.0.title}}</a>
+    </a>
+    <p class="postdate">
+      <a class="datelink" href="/user/{{post.0.author}}">{{post.0.author}}</a> - {{post.0.date|date:'Y-m-d'}}
+    </p>
+    <div class="container-fluid post">
+      {% include 'timeline/includes/post.html' %}
+      <div style="margin-top:-10px;">
+
+      </div>
+    </div>
+    <br />
+  {% endfor %}
+{% endblock %}

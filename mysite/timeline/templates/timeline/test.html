@@ -1,0 +1,23 @@
+{% extends "timeline/header.html" %}
+
+{% block lefttitle %}
+  <br>
+  <center>
+    <h3>codeli.ne</h3>
+    <h5></h5>
+  </center>
+{% endblock %}
+
+{% block sidebarlinks %}
+  {% include 'timeline/includes/sidebarlinks.html' %}
+{% endblock %}
+
+{% block content %}
+  <p>Hey, welcome to my website</p>
+  {% for n in r %}
+    <p>
+      line {{n}}
+    </p>
+  {% endfor %}
+
+{% endblock %}

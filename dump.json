@@ -1,0 +1,28 @@
+{
+  "cells":[
+    {
+      "type":0,
+      "lang":null,
+      "title":"",
+      "content":"hello world
+my name is murtaza
+"
+    },
+    {
+      "type":1,
+      "lang":null,
+      "title":"md",
+      "content":"##this is markdown 
+and this is code:"
+    },
+    {
+      "type":2,
+      "lang":"python",
+      "title":"py",
+      "content":"for i in range(12):
+    print(i)
+def func(param):
+    pass"
+    }
+  ]
+}

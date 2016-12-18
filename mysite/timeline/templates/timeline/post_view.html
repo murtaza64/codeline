@@ -1,0 +1,29 @@
+{% extends "timeline/header.html" %}
+{% block head %}
+  <title>{{post.0.title}}</title>
+{% endblock %}
+{% block lefttitle %}
+  <br>
+  <center>
+    <a class="title" href="/">
+      <img src=""/>
+    </a>
+    <a class="subtitle" href="/{{post.0.id}}"
+      <p class="subtitle">/{{post.0.id}}</p>
+    </a>
+  </center>
+{% endblock %}
+
+{% block sidebarlinks %}
+  {% include 'timeline/includes/sidebarlinks.html' %}
+{% endblock %}
+
+{% block title %}
+  <p class="posttitle">{{post.0.title}}</p>
+  <p class="postdate">
+    <a class="datelink" href="/user/{{post.0.author}}">{{post.0.author}}</a> - {{post.0.date|date:'Y-m-d H:m:s'}}
+  </p>
+{% endblock %}
+{% block content %}
+  {% include 'timeline/includes/post.html' %}
+{% endblock %}
