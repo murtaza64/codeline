@@ -1,15 +1,9 @@
 {% extends "timeline/header.html" %}
-{% block head %}
+<!--{% block head %}
   <title>post list</title>
-{% endblock %}
+{% endblock %}-->
 {% block lefttitle %}
-  <br>
-  <center>
-    <a class="title" href="/">
-      <h3>codeli.ne</h3>
-    </a>
-      <h5>&nbsp;</h5>
-  </center>
+  {% include 'timeline/includes/lefttitle.html' %}
 {% endblock %}
 
 {% block sidebarlinks %}

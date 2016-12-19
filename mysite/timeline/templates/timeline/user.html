@@ -3,15 +3,7 @@
   <title>{{ user.username }}'s codeli.ne</title>
 {% endblock %}
 {% block lefttitle %}
-  <br>
-  <center>
-    <a class="title" href="/">
-      <h3>codeli.ne</h3>
-    </a>
-    <a class="subtitle" href="/user/{{user.username}}"
-      <p class = "subtitle">/user/{{user.username}}</p>
-    </a>
-  </center>
+  {% include 'timeline/includes/lefttitle.html' %}
 {% endblock %}
 
 {% block sidebarlinks %}
@@ -21,9 +13,9 @@
 {% block content %}
   {% for post in posts %}
     <p class="posttitle">
-      <a class="title" href="/{{post.0.id}}">{{post.0.title}}</a>
+      <a class="title" href="/{{post.id}}">{{post.title}}</a>
     </p>
-    <p class="postdate">{{post.0.date|date:'Y-m-d'}}</p>
+    <p class="postdate">{{post.date|date:'Y-m-d'}}</p>
     <div class="container-fluid post">
       {% include 'timeline/includes/post.html' %}
     </div>
