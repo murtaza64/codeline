@@ -9,5 +9,6 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)$', views.SinglePostView.as_view(), name = 'post_view'),
     #url(r'^test/', views.test, name = 'test'),
     url(r'^new/', views.new, name='new'),
-    url(r'^user/(?P<usr>\w+)$', views.UserTimelineView.as_view(), name='user')
+    url(r'^user/(?P<usr>\w+)$', views.UserTimelineView.as_view(), name='user'),
+    url(r'^tag/(?:(\w+)\+)?(\w+)$', views.TagTimelineView.as_view(), name='user')
 ]

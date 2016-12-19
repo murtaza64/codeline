@@ -36,6 +36,16 @@ pre.codecell{
 
 .postdate{
   color: #a0a0a0;
+  margin-bottom: 4px;
+}
+.posttags{
+  color: #909090;
+}
+a.taglink{
+  color: inherit;
+}
+a.taglink.lang{
+  color: #c06060;
 }
 p.postdate{
   font-size:12px;
@@ -44,4 +54,12 @@ p.postdate{
   font-size:20px;
   margin-top:8px;
   margin-bottom:4px;
+}
+a.datelink{
+  text-decoration: none;
+  color:inherit;
+}
+a.datelink:hover{
+  text-decoration: none;
+  color:#b8b8b8;
 }

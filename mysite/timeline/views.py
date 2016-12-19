@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView
-from timeline.models import Post
+from timeline.models import Post, Tag
 from django.contrib.auth.models import User
 import json, re
 from markdown2 import markdown
@@ -20,8 +20,9 @@ def assemble_post(post):
             t = re.sub(r'\n', '<br>', t)
             #print(t)
         cell['content'] = t
+    tags = post.tags.all().order_by('name').order_by('-lang')
     send_post = {'id': post.id, 'title': post.title, 'author': post.author,
-        'date': post.date, 'body': enumerate(cells)}
+        'date': post.date, 'tags': tags, 'body': enumerate(cells)}
     print('assembled post')
     return send_post
 
@@ -65,6 +66,31 @@ class UserTimelineView(PostListView):
         context = super(UserTimelineView, self).get_context_data(**kwargs)
         context['subtitle'] = '/user/' + self.kwargs['usr']
         context['title'] = '{}\'s codli.ne'.format(self.kwargs['usr'])
+        return context
+
+class TagTimelineView(PostListView):
+    template_name = 'timeline/user.html'
+    def get_queryset(self):
+        print(self.args)
+        tags = []
+        queryset = []
+        qs = super(TagTimelineView, self).get_queryset()
+        for tagname in [a for a in self.args if a]:
+            tag = Tag.objects.get(name = tagname)
+            queryset += qs.filter(tags = tag)
+        queryset_unique = []
+        for q in queryset:
+            if q not in queryset_unique:
+                queryset_unique.append(q)
+        print(queryset_unique)
+        return queryset_unique
+
+    def get_context_data(self, **kwargs):
+        args = [a for a in self.args if a]
+        print('TAG TIMELINE VIEW')
+        context = super(TagTimelineView, self).get_context_data(**kwargs)
+        context['subtitle'] = '/tag/' + '+'.join(args)
+        context['title'] = '+'.join(args) + ' | codeli.ne'
         return context
 
 def new(request):

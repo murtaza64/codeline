@@ -1,4 +1,5 @@
 from django.contrib import admin
-from timeline.models import Post
+from timeline.models import Post, Tag
 
 admin.site.register(Post)
+admin.site.register(Tag)

@@ -24,14 +24,7 @@ a.subtitle:hover{
   color:#a0a0a0;
   text-decoration: none;
 }
-a.datelink{
-  text-decoration: none;
-  color:inherit;
-}
-a.datelink:hover{
-  text-decoration: none;
-  color:#b8b8b8;
-}
+
 #sidebar{
   background-color: #f6f6f6;
   border: none;
