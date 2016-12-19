@@ -10,12 +10,6 @@
   {% include 'timeline/includes/sidebarlinks.html' %}
 {% endblock %}
 
-{% block title %}
-  <p class="posttitle">{{post.title}}</p>
-  <p class="postdate">
-    <a class="datelink" href="/user/{{post.author}}">{{post.author}}</a> - {{post.date|date:'Y-m-d H:m:s'}}
-  </p>
-{% endblock %}
 {% block content %}
   {% include 'timeline/includes/post.html' %}
 {% endblock %}

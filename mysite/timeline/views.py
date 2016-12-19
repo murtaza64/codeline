@@ -26,7 +26,8 @@ def assemble_post(post):
     print('assembled post')
     return send_post
 
-
+class JSONTimelineView():
+    pass
 class PostListView(ListView):
     queryset = Post.objects.all().order_by('-date')
     def get_context_data(self, **kwargs):
@@ -57,8 +58,8 @@ class UserTimelineView(PostListView):
 
     def get_queryset(self):
         qs = super(UserTimelineView, self).get_queryset()
-        user = User.objects.get(username = self.kwargs['usr'])
-        qs = qs.filter(author = user)
+        user = User.objects.get(username=self.kwargs['usr'])
+        qs = qs.filter(author=user)
         return qs
 
     def get_context_data(self, **kwargs):
@@ -71,19 +72,13 @@ class UserTimelineView(PostListView):
 class TagTimelineView(PostListView):
     template_name = 'timeline/user.html'
     def get_queryset(self):
-        print(self.args)
         tags = []
         queryset = []
         qs = super(TagTimelineView, self).get_queryset()
-        for tagname in [a for a in self.args if a]:
-            tag = Tag.objects.get(name = tagname)
-            queryset += qs.filter(tags = tag)
-        queryset_unique = []
-        for q in queryset:
-            if q not in queryset_unique:
-                queryset_unique.append(q)
-        print(queryset_unique)
-        return queryset_unique
+        tags = [Tag.objects.get(name=t) for t in [a for a in self.args if a]]
+        qs = qs.filter(tags__in=tags)
+        print(qs)
+        return qs
 
     def get_context_data(self, **kwargs):
         args = [a for a in self.args if a]
