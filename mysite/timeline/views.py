@@ -53,7 +53,7 @@ class JSONPostViewMixin(TemplateResponseMixin):
             fields['body'] = json.loads(p.body)
             d['fields'] = fields
             j.append(d)
-        print(j)
+        #print(j)
         return j
 
 class PostListView(JSONPostViewMixin, ListView):
