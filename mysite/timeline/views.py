@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from django.views.generic import ListView, DetailView
+from django.views.generic.base import TemplateResponseMixin
 from timeline.models import Post, Tag
 from django.contrib.auth.models import User
+from django.core import serializers
 import json, re
 from markdown2 import markdown
 
@@ -26,9 +29,34 @@ def assemble_post(post):
     print('assembled post')
     return send_post
 
-class JSONTimelineView():
-    pass
-class PostListView(ListView):
+class JSONPostViewMixin(TemplateResponseMixin):
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.GET.get('format') == 'json':
+            return JsonResponse(
+                dict(data=self.get_data(context)),
+                **response_kwargs,
+            )
+        else:
+            return super(JSONPostViewMixin, self).render_to_response(context, **response_kwargs)
+    def get_data(self, context):
+        qs = context['object_list']
+        j = []
+        for p in qs:
+            d = {}
+            d['pk'] = p.pk
+            d['model'] = 'timeline.post'
+            fields = {}
+            fields['title'] = p.title
+            fields['author'] = p.author.pk
+            fields['tags'] = [t.id for t in p.tags.all()]
+            fields['date'] = p.date
+            fields['body'] = json.loads(p.body)
+            d['fields'] = fields
+            j.append(d)
+        print(j)
+        return j
+
+class PostListView(JSONPostViewMixin, ListView):
     queryset = Post.objects.all().order_by('-date')
     def get_context_data(self, **kwargs):
         context = super(PostListView, self).get_context_data(**kwargs)
@@ -42,15 +70,17 @@ class GlobalTimelineView(PostListView):
         context['title'] = 'codeli.ne'
         return context
 
-class SinglePostView(DetailView):
+class SinglePostView(JSONPostViewMixin, DetailView):
     template_name = 'timeline/post_view.html'
     model = Post
 
     def get_context_data(self, **kwargs):
         context = super(SinglePostView, self).get_context_data(**kwargs)
         context['post'] = assemble_post(context['object'])
+        #HACK: make SinglePostView work nicely with JSONPostViewMixin
+        context['object_list'] = [context['object']]
         context['subtitle'] = '/' + context['post']['title']
-        context['title'] = '{} | codei.ne'.format(context['post']['title'])
+        context['title'] = '{} | codeli.ne'.format(context['post']['title'])
         return context
 
 class UserTimelineView(PostListView):

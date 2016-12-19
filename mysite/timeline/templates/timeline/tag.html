@@ -12,13 +12,7 @@
 
 {% block content %}
   {% for post in posts %}
-    <p class="posttitle">
-      <a class="title" href="/{{post.id}}">{{post.title}}</a>
-    </p>
-    <p class="postdate">{{post.date|date:'Y-m-d'}}</p>
-    <div class="container-fluid post">
       {% include 'timeline/includes/post.html' %}
-    </div>
   {% endfor %}
   <br />
 {% endblock %}
