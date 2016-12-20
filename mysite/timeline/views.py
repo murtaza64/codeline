@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.base import TemplateResponseMixin
 from timeline.models import Post, Tag
 from django.contrib.auth.models import User
@@ -9,6 +9,11 @@ import json, re
 from markdown2 import markdown
 
 def assemble_post(post):
+    '''
+    Takes a Post object and converts it into a format friendly
+    to the template (unpacks post.body into an enumerated iterable
+    of cell dicts).
+    '''
     #print(post.body)
     body_dict = json.loads(post.body)
     #print(body_dict)
@@ -23,10 +28,10 @@ def assemble_post(post):
             t = re.sub(r'\n', '<br>', t)
             #print(t)
         cell['content'] = t
-    tags = post.tags.all().order_by('name').order_by('-lang')
+    tags = post.tags.all().order_by('name', '-lang')
     send_post = {'id': post.id, 'title': post.title, 'author': post.author,
         'date': post.date, 'tags': tags, 'body': enumerate(cells)}
-    print('assembled post')
+    #print('assembled post')
     return send_post
 
 class JSONPostViewMixin(TemplateResponseMixin):
@@ -65,6 +70,9 @@ class PostListView(JSONPostViewMixin, ListView):
 
 class GlobalTimelineView(PostListView):
     template_name = 'timeline/timeline.html'
+    def get(self, *args, **kwargs):
+        #import ipdb; ipdb.set_trace(context=9)
+        return super(GlobalTimelineView, self).get(*args, **kwargs)
     def get_context_data(self, **kwargs):
         context = super(GlobalTimelineView, self).get_context_data(**kwargs)
         context['title'] = 'codeli.ne'
@@ -77,7 +85,7 @@ class SinglePostView(JSONPostViewMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(SinglePostView, self).get_context_data(**kwargs)
         context['post'] = assemble_post(context['object'])
-        #HACK: make SinglePostView work nicely with JSONPostViewMixin
+        #HACK: makes SinglePostView work nicely with JSONPostViewMixin
         context['object_list'] = [context['object']]
         context['subtitle'] = '/' + context['post']['title']
         context['title'] = '{} | codeli.ne'.format(context['post']['title'])
@@ -118,7 +126,12 @@ class TagTimelineView(PostListView):
         context['title'] = '+'.join(args) + ' | codeli.ne'
         return context
 
-def new(request):
-    return render(request, 'timeline/new.html', {'title':'new'})
+class NewPostView(TemplateView):
+    template_name = 'timeline/new.html'
+    def get_context_data(self, **kwargs):
+        context = super(NewPostView, self).get_context_data(**kwargs)
+        context['subtitle'] = '/new'
+        context['title'] = 'new post | codeli.ne'
+        return context
 
 #TODO:40 tags, ajax/live page updates
