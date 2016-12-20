@@ -51,7 +51,9 @@ td{
   padding: 10px;
   margin-top: 5px;
   border: 1px solid #d8d8d8;
-  color: #909090;
+}
+.newfield{
+    color: #909090;
 }
 .container-fluid.cellfield_container{
   border-left: 1px solid #d8d8d8;
@@ -66,7 +68,7 @@ td{
   border-bottom:1px solid #e6e6e6;
 }
 .cellinputmeta table{
-  font: inherit;
+  font-size: inherit;
 }
 .cellinputmeta td{
     padding: 3px 0px;

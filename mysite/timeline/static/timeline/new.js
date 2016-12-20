@@ -12,23 +12,43 @@ cellinput_html = '\
 function add_cell(){
   var cellinputs = $("#cellinputs")[0];
   cellinputs.innerHTML += cellinput_html;
-  cellfields = $(".cellfield");
+  //cellfields = $(".cellfield");
   //$(cellfields[cellfields.length-1]).css("margin-bottom", "0");
   //$(cellfields[cellfields.length-2]).css("margin-bottom", "10px");
   setup_inputs()
 }
-$(document).ready(function(){
+$(function(){
   console.log('ready');
+  $('.newfield').css('color', '#909090');
   setup_inputs()
+  $('#submit').click(function(){
+    post = {}
+    post.title = $('#titlefield')[0].innerHTML;
+    post.tagstring = $('#tagfield')[0].innerHTML;
+    post.author = 'murtaza64' //TODO fix, uh, this whole thing
+    post.body = [];
+    var cellfields = $('.cellfield');
+    var cellinputnames = $('.cellinputname');
+    var cellinputcontents = $('.cellinputcontent');
+    var cellinputtypes = $('.cellinputtype');
+    for (var i = 0; i < cellfields.length; i++){
+      cell = {}
+      cellfield = cellfields[i]
+      cell.title = cellinputnames[i].innerHTML
+      cell.body = cellinputcontents[i].innerHTML
+      cell.type = +cellinputtypes[i].innerHTML
+      cell.lang = null
+      post.body.push(cell)
+    }
+    console.log(post)
+    $.ajax({
+      //TODO
+    })
+  });
 });
-$('#submit').click(function(){
-  $.ajax({
-    //TODO
-  })
-})
+
 function setup_inputs(){
   $('.newfield').prop('contenteditable',true);
-  $('.newfield').css('color', '#909090');
   $('.cellinputtype').click(function(){
     if (this.innerHTML == '0'){
       this.innerHTML = 1;

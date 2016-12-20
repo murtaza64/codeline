@@ -133,5 +133,8 @@ class NewPostView(TemplateView):
         context['subtitle'] = '/new'
         context['title'] = 'new post | codeli.ne'
         return context
+    def post(self, request, *args, **kwargs):
+        newpost = Post()
+
 
 #TODO:40 tags, ajax/live page updates
