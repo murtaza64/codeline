@@ -121,4 +121,4 @@ class TagTimelineView(PostListView):
 def new(request):
     return render(request, 'timeline/new.html', {'title':'new'})
 
-#TODO: tags, ajax/live page updates
+#TODO:40 tags, ajax/live page updates
