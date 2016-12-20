@@ -2,7 +2,7 @@ cellinput_html = '\
 <div class="container-fluid cellfield">\
   <div class="cellinputmeta">\
     <table><tr>\
-    <td><div class="cellinputtype">0</div></td>\
+    <td><button class="cellinputtype">0</button></td>\
     <td style="width: 100%"><div class="newfield cellinputname">cell name</div></td>\
   </tr></table>\
   </div>\
@@ -21,6 +21,11 @@ $(document).ready(function(){
   console.log('ready');
   setup_inputs()
 });
+$('#submit').click(function(){
+  $.ajax({
+    //TODO
+  })
+})
 function setup_inputs(){
   $('.newfield').prop('contenteditable',true);
   $('.newfield').css('color', '#909090');
