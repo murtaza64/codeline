@@ -2,7 +2,7 @@ CELLINPUT_HTML = '\
 <div class="container-fluid cellfield" >\
   <div class="cellinputmeta">\
     <table><tr>\
-      <td><button class="cellinputtype">Aa</button></td>\
+      <td><button class="cellinputtype">{}</button></td>\
       <td style="width: 100%; padding-left:5px">\
         <input type=text class="newfield cellinputname">\
       </td>\
@@ -63,11 +63,97 @@ $.ajaxSetup({
     }
 });
 
+
+function setup_ace(i){
+  var editor_id = "ace_editor" + i.toString();
+  $('.ace')[i].id = editor_id;
+  var editor = ace.edit(editor_id);
+  editor.setTheme("ace/theme/chrome");
+  editor.setOptions({
+    minLines: 5,
+    maxLines: 50
+  });
+  editor.getSession().setUseSoftTabs(true);
+  editor.getSession().setUseWrapMode(true);
+  editor.getSession().on("changeMode", function(){
+    console.log('changed mode');
+    $($(".cellinputlang")[i]).css("border-color", "#409060");
+    $(".cellinputlang")[i].last_correct_mode = $(".cellinputlang")[i].value.toLowerCase();
+  });
+}
+function setup_placeholder(selector, plchldr){
+  $(selector).focus(function(){
+    if (this.value == plchldr){
+      this.value = "";
+    }
+    $(this).css('color', 'inherit');
+  }).focusout(function(){
+    if (this.value == ""){
+      $(this).css('color', '#909090');
+      this.value = plchldr;
+    }
+  })
+
+    $(selector).val(plchldr);
+    $(selector).css("color", "#909090");
+}
+function setup_inputs(i){
+  setup_ace(i);
+  //$('.newfield').prop('contenteditable',true);
+  $($('.cellinputtype')[i]).click(function(){
+    var i = $('.cellinputtype').index(this)
+    if (this.innerHTML == 'Aa'){
+      this.innerHTML = 'MD';
+      $($('.cellinputlang')[i]).val("markdown").attr("disabled", true);
+    } else if (this.innerHTML == 'MD'){
+      this.innerHTML = '{}';
+      this.style.paddingTop = 0;
+      this.style.fontFamily = "Consolas,monospace";
+      $($('.cellinputlang')[i]).val("language").attr("disabled", false).css('color', '#909090');
+
+    } else {
+      this.style.paddingTop = 2;
+      this.innerHTML = 'Aa';
+      $($('.cellinputlang')[i]).val("text").css("color", "inherit").attr("disabled", true);
+      //$('.cellinputcontent')[i].style.fontFamily = "inherit";
+      this.style.fontFamily = "inherit";
+    }
+    $($('.cellinputlang')[i]).change();
+  });
+
+  $($('.cellinputlang')[i]).change(function(){
+    mode = this.value.toLowerCase()
+      if (mode == this.last_correct_mode) {
+        this.style.borderColor = "#409060";
+        return;
+      }
+      this.style.borderColor = "#c06060";
+      console.log('cellinputlang change');
+      var editor = ace.edit("ace_editor" + i.toString());
+      if (this.value == LANG || this.value == ""){
+        this.style.borderColor = "#d8d8d8";
+        return;
+      }
+      if (mode == "c" || mode == "c++" || mode == "cpp"){
+        editor.getSession().setMode("ace/mode/c_cpp");
+        return;
+      }
+      console.log("asking for mode change", editor);
+      editor.getSession().setMode("ace/mode/" + mode);
+  });
+
+  setup_placeholder($('.cellinputname')[i], CELL_NAME);
+  setup_placeholder($('.cellinputlang')[i], LANG);
+  $('.cellinputtype')[i].style.fontFamily = "Consolas,monospace";
+  $(".cellinputlang")[i].last_correct_mode = "text";
+
+  //setup_placeholder(".cellinputcontent", CELL_CONTENT);
+}
+
 $(function(){
   console.log('ready');
   $('.newfield').css('color', '#909090');
   setup_inputs(0);
-  setup_ace(0);
   setup_placeholder("#titlefield", POST_TITLE);
   setup_placeholder("#tagfield", TAGS);
 
@@ -78,7 +164,6 @@ $(function(){
     //$(cellfields[cellfields.length-1]).css("margin-bottom", "0");
     //$(cellfields[cellfields.length-2]).css("margin-bottom", "10px");
     var i = $('.cellfield').length-1;
-    setup_ace(i);
     setup_inputs(i);
   });
 
@@ -151,90 +236,3 @@ $(function(){
     });
   });
 });
-function setup_ace(i){
-  var editor_id = "ace_editor" + i.toString();
-  $('.ace')[i].id = editor_id;
-  var editor = ace.edit(editor_id);
-  editor.setTheme("ace/theme/github");
-  editor.setOptions({
-    minLines: 5,
-    maxLines: 50
-  });
-  editor.getSession().setMode("ace/mode/text");
-  editor.getSession().setUseSoftTabs(true);
-
-  editor.getSession().on("changeMode", function(){
-    console.log('changed mode');
-    $($(".cellinputlang")[i]).css("border-color", "#409060");
-    $(".cellinputlang")[i].last_correct_mode = $(".cellinputlang")[i].value.toLowerCase();
-  });
-}
-function setup_placeholder(selector, plchldr){
-  $(selector).focus(function(){
-    if (this.value == plchldr){
-      this.value = "";
-    }
-    $(this).css('color', 'inherit');
-  }).focusout(function(){
-    if (this.value == ""){
-      $(this).css('color', '#909090');
-      this.value = plchldr;
-    }
-  })
-
-    $(selector).val(plchldr);
-    $(selector).css("color", "#909090");
-}
-function setup_inputs(i){
-  //$('.newfield').prop('contenteditable',true);
-  $($('.cellinputtype')[i]).click(function(){
-    var i = $('.cellinputtype').index(this)
-    if (this.innerHTML == 'Aa'){
-      this.innerHTML = 'MD';
-      $($('.cellinputlang')[i]).val("markdown").attr("disabled", true);
-    } else if (this.innerHTML == 'MD'){
-      this.innerHTML = '{}';
-      this.style.paddingTop = 0;
-      this.style.fontFamily = "Consolas,monospace";
-      $($('.cellinputlang')[i]).val("language").attr("disabled", false).css('color', '#909090');
-
-    } else {
-      this.style.paddingTop = 2;
-      this.innerHTML = 'Aa';
-      $($('.cellinputlang')[i]).val("text").css("color", "inherit").attr("disabled", true);
-      //$('.cellinputcontent')[i].style.fontFamily = "inherit";
-      this.style.fontFamily = "inherit";
-    }
-    $($('.cellinputlang')[i]).change();
-  });
-
-  $('textarea').each(function () { //from Obsidian on StackOverflow
-      this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
-  }).on('input', function () {
-      this.style.height = 'auto';
-      this.style.height = (this.scrollHeight) + 'px';
-  });
-  setup_placeholder($('.cellinputname')[i], CELL_NAME);
-  setup_placeholder($('.cellinputlang')[i], LANG);
-  $($('.cellinputlang')[i]).change(function(){
-    mode = this.value.toLowerCase()
-      if (mode == this.last_correct_mode) {
-        this.style.borderColor = "#409060";
-        return;
-      }
-      this.style.borderColor = "#c06060";
-      console.log('cellinputlang change');
-      var editor = ace.edit("ace_editor" + i.toString());
-      if (this.value == LANG || this.value == ""){
-        this.style.borderColor = "#d8d8d8";
-        return;
-      }
-      if (mode == "c" || mode == "c++" || mode == "cpp"){
-        editor.getSession().setMode("ace/mode/c_cpp");
-        return;
-      }
-      console.log("asking for mode change", editor);
-      editor.getSession().setMode("ace/mode/" + mode);
-  }).val("text").css("color", "inherit").css("border-color", "#409060").attr("disabled", true);
-  //setup_placeholder(".cellinputcontent", CELL_CONTENT);
-}
