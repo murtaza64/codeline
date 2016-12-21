@@ -115,7 +115,7 @@ function setup_inputs(i){
     } else if (this.innerHTML == 'MD'){
       this.innerHTML = '{}';
       this.style.fontSize = 'inherit';
-      this.style.paddingTop = 4;
+      this.style.paddingTop = 7;
       this.style.fontFamily = "Consolas,monospace";
       $($('.cellinputlang')[i]).val("language").attr("disabled", false).css('color', '#909090');
 
