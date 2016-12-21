@@ -53,13 +53,13 @@ td{
   border: 1px solid #d8d8d8;
   width:100%;
 }
-textarea.newfield.cellinputcontent{
+/*textarea.newfield.cellinputcontent{
   border: 1px solid #d8d8d8;
   padding: 5px;
   margin: 5px 0;
   width: 100%;
   resize: vertical
-}
+}*/
 .newfield{
     /*color: #909090;*/
 }
@@ -83,12 +83,31 @@ textarea.newfield.cellinputcontent{
 }
 .newfield.cellinputname{
   width: 100%;
+  font-size: 11px;
   padding: 3px;
-  font-size: 9px;
+  border: 1px solid #d8d8d8;
+
+}
+.newfield.cellinputlang{
+   width: 80px;
+   padding: 3px;
+   font-size: 11px;
+   margin-left: 5px;
+   border: 1px solid #d8d8d8;
+}
+.cellinputlang:disabled{
+  background-color: #f6f6f6;
 }
 .cellinputtype{
   /*border: 1px solid #e6e6e6;*/
   width: 30px;
   height: 30px;
   padding: 2px;
+}
+
+.ace {
+    position: relative;
+    height: 500px;
+    width: 100%;
+    margin: 5px 0;
 }
