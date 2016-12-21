@@ -98,11 +98,32 @@ td{
 .cellinputlang:disabled{
   background-color: #f6f6f6;
 }
-.cellinputtype{
+.newbutton.cellinputtype{
   /*border: 1px solid #e6e6e6;*/
   width: 30px;
   height: 30px;
-  padding: 2px;
+  padding: 4px 5px;
+}
+.newbutton.removecell{
+  margin-left: 5px;
+  width: 25px;
+  height: 25px;
+  padding-top: 3px;
+}
+
+.newbutton{
+  background: linear-gradient(#e8e8e8, #d6d6d6);
+  border: 1px solid #b8b8b8;
+  text-align: center;
+  width: auto;
+  display: inline-block;
+  padding: 2px 5px;
+}
+.newbutton:hover{
+  cursor: pointer;
+}
+.newbutton:active{
+  background: linear-gradient(#989898, #b6b6b6);
 }
 
 .ace {
@@ -110,4 +131,10 @@ td{
     height: 500px;
     width: 100%;
     margin: 5px 0;
+}
+
+#addcell {
+  width: 25px;
+  height: 25px;
+  padding-top: 1px;
 }

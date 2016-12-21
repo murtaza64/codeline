@@ -22,12 +22,15 @@
       <div class="container-fluid cellfield" >
         <div class="cellinputmeta">
           <table><tr>
-            <td><button class="cellinputtype">{}</button></td>
+            <td><div class="newbutton cellinputtype">{}</div></td>
             <td style="width: 100%; padding-left:5px">
               <input type=text class="newfield cellinputname">
             </td>
             <td>
               <input type=text class="newfield cellinputlang">
+            </td>
+            <td>
+              <div class="newbutton removecell">-</div>
             </td>
           </tr></table>
         </div>
@@ -37,10 +40,10 @@
       </div>
       <!--<div style="margin-top:-10px;"></div>-->
     </div>
-    <button id="addcell">+</button>
+    <div class="newbutton" id="addcell">+</div>
   </div>
   <br>
-  <button id="submit">submit</button>
+  <div class="newbutton" id="submit">submit</div>
   <br>
   <div id="status" style="margin-top:10px;"> </div>
 {% endblock %}
