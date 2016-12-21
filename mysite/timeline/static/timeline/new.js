@@ -4,11 +4,11 @@ cellinput_html = '\
     <table><tr>\
       <td><button class="cellinputtype">Aa</button></td>\
       <td style="width: 100%; padding-left:5px">\
-        <input type=text value="cell name" class="newfield cellinputname">\
+        <input type=text class="newfield cellinputname">\
       </td>\
     </tr></table>\
   </div>\
-  <textarea rows=2 class="newfield cellinputcontent" value="cell content"></textarea>\
+  <textarea rows=2 class="newfield cellinputcontent"></textarea>\
 </div>\
 '
 // using jQuery
@@ -42,18 +42,20 @@ $.ajaxSetup({
     }
 });
 
-function add_cell(){
-  var cellinputs = $("#cellinputs")[0];
-  cellinputs.innerHTML += cellinput_html;
-  //cellfields = $(".cellfield");
-  //$(cellfields[cellfields.length-1]).css("margin-bottom", "0");
-  //$(cellfields[cellfields.length-2]).css("margin-bottom", "10px");
-  setup_inputs()
-}
 $(function(){
   console.log('ready');
   $('.newfield').css('color', '#909090');
   setup_inputs()
+
+  $('#addcell').click(function (){
+    var cellinputs = $("#cellinputs");
+    cellinputs.append(cellinput_html);
+    //cellfields = $(".cellfield");
+    //$(cellfields[cellfields.length-1]).css("margin-bottom", "0");
+    //$(cellfields[cellfields.length-2]).css("margin-bottom", "10px");
+    setup_inputs()
+  });
+
   $('#submit').click(function(){
     post = {}
     post.title = $('#titlefield')[0].value;
@@ -115,6 +117,7 @@ function setup_inputs(){
       this.style.fontFamily = "inherit";
     }
   });
+
   $('textarea').each(function () { //from Obsidian on StackOverflow
       this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
   }).on('input', function () {
@@ -129,14 +132,23 @@ function setup_inputs(){
         this.value = "";
       }
       $(this).css('color', 'inherit');
-    });
-    $(selector).focusout(function(){
+    }).focusout(function(){
       if (this.value == ""){
         $(this).css('color', '#909090');
         this.value = plchldr;
       }
-    });
-    $(selector).val(plchldr);
+    })
+    sel = $(selector);
+    for (var i=0; i<sel.length; i++){
+      //console.log(sel[i], sel[i].value);
+      if (sel[i].value == ""){
+        sel[i].value = plchldr;
+        //console.log(sel[i], sel[i].value);
+      }
+      if (sel[i].value == plchldr){
+        sel[i].style.color = '#909090';
+      }
+    }
   }
 
   setup_placeholder("#titlefield", "post title");

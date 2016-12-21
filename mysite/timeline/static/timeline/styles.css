@@ -61,7 +61,7 @@ textarea.newfield.cellinputcontent{
   resize: vertical
 }
 .newfield{
-    color: #909090;
+    /*color: #909090;*/
 }
 .container-fluid.cellfield_container{
   border-left: 1px solid #d8d8d8;
