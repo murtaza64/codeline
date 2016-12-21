@@ -179,7 +179,7 @@ class NewPostView(TemplateView):
         newpost.body = json.dumps(body)
         print(newpost)
         newpost.save()
-        return JsonResponse(dict(success=True))
+        return JsonResponse(dict(success=True, link='http://'+request.get_host()+'/'+str(newpost.id)))
 
 
 #TODO:40 tags, ajax/live page updates

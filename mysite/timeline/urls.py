@@ -10,5 +10,5 @@ urlpatterns = [
     #url(r'^test/', views.test, name = 'test'),
     url(r'^new/', views.NewPostView.as_view(), name='new'),
     url(r'^user/(?P<usr>\w+)$', views.UserTimelineView.as_view(), name='user'),
-    url(r'^tag/(?:(\w+)\+)?(\w+)$', views.TagTimelineView.as_view(), name='user')
+    url(r'^tag/(?:([a-zA-Z0-9.-_]+)\+)?([a-zA-Z0-9.-_]+)$', views.TagTimelineView.as_view(), name='user')
 ]

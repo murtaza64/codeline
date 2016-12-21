@@ -115,6 +115,10 @@ $(function(){
             statuserror("error: empty post");
           }
         }
+        else{
+          statusupdate("post created");
+          statusupdate("<a href='"+data.link+"'>"+data.link+"</a>");
+        }
       },
       error: function(){
         statusclear()
