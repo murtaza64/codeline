@@ -159,6 +159,8 @@ class NewPostView(TemplateView):
             print(e)
             return JsonResponse(dict(error='true'))
         newpost.save()
+        if not newpost.title:
+            newpost.title = 'untitled '+str(newpost.id)
         tags = postdict['tagstring'].split()
         print(tags)
         for tag in tags:

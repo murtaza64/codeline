@@ -2,7 +2,7 @@ cellinput_html = '\
 <div class="container-fluid cellfield" >\
   <div class="cellinputmeta">\
     <table><tr>\
-      <td><button class="cellinputtype">Aa</button></td>\
+      <td><button class="cellinputtype" style="width: 35px;">Aa</button></td>\
       <td style="width: 100%; padding-left:5px">\
         <input type=text class="newfield cellinputname">\
       </td>\
@@ -12,6 +12,12 @@ cellinput_html = '\
 </div>\
 '
 // using jQuery
+
+var CELL_NAME = "cell name";
+var CELL_CONTENT = "cell content";
+var TAGS = "tag1 tag2 ...";
+var POST_TITLE = "post title";
+
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -69,7 +75,9 @@ $(function(){
     statusupdate("submitting");
     post = {};
     post.title = $('#titlefield')[0].value;
+    if (post.title == POST_TITLE) post.title = "";
     post.tagstring = $('#tagfield')[0].value;
+    if (post.tagstring == TAGS) post.tagstring = "untagged";
     post.author = 'murtaza64' //TODO fix, uh, this whole thing
     post.cells = [];
     var cellfields = $('.cellfield');
@@ -80,9 +88,9 @@ $(function(){
       cell = {}
       cellfield = cellfields[i]
       cell.title = cellinputnames[i].value;
-      if (cell.title == "cell name") cell.title = "";
+      if (cell.title == CELL_NAME) cell.title = "";
       cell.content = cellinputcontents[i].value;
-      if (cell.content == "cell content") cell.content = "";
+      if (cell.content == CELL_CONTENT) cell.content = "";
       type_btn = cellinputtypes[i]
       if (type_btn.innerHTML == 'Aa'){
         cell.type = 0;
@@ -137,9 +145,11 @@ function setup_inputs(){
       this.innerHTML = 'MD';
     } else if (this.innerHTML == 'MD'){
       this.innerHTML = '{}';
+      this.style.paddingTop = 0;
       $('.cellinputcontent')[i].style.fontFamily = "Consolas,monospace";
       this.style.fontFamily = "Consolas,monospace";
     } else {
+      this.style.paddingTop = 2;
       this.innerHTML = 'Aa';
       $('.cellinputcontent')[i].style.fontFamily = "inherit";
       this.style.fontFamily = "inherit";
@@ -179,8 +189,8 @@ function setup_inputs(){
     }
   }
 
-  setup_placeholder("#titlefield", "post title");
-  setup_placeholder("#tagfield", "#tag1 #tag2 ...");
-  setup_placeholder(".cellinputname", "cell name");
-  setup_placeholder(".cellinputcontent", "cell content");
+  setup_placeholder("#titlefield", POST_TITLE);
+  setup_placeholder("#tagfield", TAGS);
+  setup_placeholder(".cellinputname", CELL_NAME);
+  setup_placeholder(".cellinputcontent", CELL_CONTENT);
 }
