@@ -27,7 +27,15 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-
+function statusclear(){
+  $('#status').html("");
+}
+function statuserror(error){
+  $('#status').append("<p style='color:#c06060;'>"+error+"</p>");
+}
+function statusupdate(update){
+  $('#status').append("<p>"+update+"</p>");
+}
 var csrftoken = getCookie('csrftoken');
 
 function csrfSafeMethod(method) {
@@ -57,7 +65,9 @@ $(function(){
   });
 
   $('#submit').click(function(){
-    post = {}
+    statusclear();
+    statusupdate("submitting");
+    post = {};
     post.title = $('#titlefield')[0].value;
     post.tagstring = $('#tagfield')[0].value;
     post.author = 'murtaza64' //TODO fix, uh, this whole thing
@@ -70,16 +80,21 @@ $(function(){
       cell = {}
       cellfield = cellfields[i]
       cell.title = cellinputnames[i].value;
+      if (cell.title == "cell name") cell.title = "";
       cell.content = cellinputcontents[i].value;
-      if (this.innerHTML == 'Aa'){
+      if (cell.content == "cell content") cell.content = "";
+      type_btn = cellinputtypes[i]
+      if (type_btn.innerHTML == 'Aa'){
         cell.type = 0;
-      } else if (this.innerHTML == 'MD'){
+      } else if (type_btn.innerHTML == 'MD'){
         cell.type = 1;
       } else {
         cell.type = 2;
       }
       cell.lang = null
-      post.cells.push(cell)
+      if (cell.title != "" || cell.content != ""){
+        post.cells.push(cell)
+      }
     }
     console.log(post)
     $.ajax({
@@ -91,11 +106,20 @@ $(function(){
 
       contentType: 'application/json',
       processData: false,
-      success: function(){
+      success: function(data, status, jqXHR){
+        statusclear();
         console.log("ajax success");
+        console.log(data);
+        if (!data.success){
+          if (data.error == "empty post"){
+            statuserror("error: empty post");
+          }
+        }
       },
       error: function(){
+        statusclear()
         console.log("ajax failure");
+        statuserror("ajax error");
       }
     });
   });

@@ -40,7 +40,6 @@ def assemble_post(post):
         cells = [dict(type=0, content='empty post')]
 
     tags = post.tags.all().order_by('-lang', 'name')
-    print(tags)
     send_post = {'id': post.id, 'title': post.title, 'author': post.author,
         'date': post.date, 'tags': tags, 'body': enumerate(cells)}
     #print('assembled post')
@@ -173,11 +172,14 @@ class NewPostView(TemplateView):
             newpost.tags.add(tag_obj)
             print(tag)
         print(postdict['cells'])
+        if (not postdict['cells']):
+            newpost.delete()
+            return JsonResponse(dict(success=False, error='empty post'))
         body = dict(cells=postdict['cells'])
         newpost.body = json.dumps(body)
         print(newpost)
         newpost.save()
-        return JsonResponse(dict(a='b'))
+        return JsonResponse(dict(success=True))
 
 
 #TODO:40 tags, ajax/live page updates
