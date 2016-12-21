@@ -1,6 +1,7 @@
 {% extends "timeline/header.html" %}
 {% block head %}
   {% load staticfiles %}
+  <!--<script type="text/javascript"> window.CSRF_TOKEN = "{% csrf_token %}"; </script>-->
   <script src="{% static 'timeline/new.js' %}"></script>
 {% endblock %}
 {% block lefttitle %}
@@ -11,19 +12,22 @@
   {% include 'timeline/includes/sidebarlinks.html' %}
 {% endblock %}
 {% block content %}
-  <div class="newfield text" id="titlefield">post title</div>
-  <div class="newfield tags" id="tagfield">#tag1, #tag2 ...</div>
-  <br>
+  {% csrf_token %}
+  <input type="text" class="newfield title" id="titlefield">
+  <input type="text" class="newfield tags" id="tagfield">
+  <br><br>
   <div class="container-fluid cellfield_container">
     <div id="cellinputs">
       <div class="container-fluid cellfield" >
         <div class="cellinputmeta">
           <table><tr>
-          <td><button class="cellinputtype">0</button></td>
-          <td style="width: 100%"><div class="newfield cellinputname">cell name</div></td>
-        </tr></table>
+            <td><button class="cellinputtype">Aa</button></td>
+            <td style="width: 100%; padding-left:5px">
+              <input type=text value="cell name" class="newfield cellinputname">
+            </td>
+          </tr></table>
         </div>
-        <div class="newfield cellinputcontent">cell content</div>
+        <textarea rows=2 class="newfield cellinputcontent" value="cell content"></textarea>
       </div>
       <!--<div style="margin-top:-10px;"></div>-->
     </div>

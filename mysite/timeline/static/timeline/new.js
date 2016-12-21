@@ -1,14 +1,47 @@
 cellinput_html = '\
-<div class="container-fluid cellfield">\
+<div class="container-fluid cellfield" >\
   <div class="cellinputmeta">\
     <table><tr>\
-    <td><button class="cellinputtype">0</button></td>\
-    <td style="width: 100%"><div class="newfield cellinputname">cell name</div></td>\
-  </tr></table>\
+      <td><button class="cellinputtype">Aa</button></td>\
+      <td style="width: 100%; padding-left:5px">\
+        <input type=text value="cell name" class="newfield cellinputname">\
+      </td>\
+    </tr></table>\
   </div>\
-  <div class="newfield cellinputcontent">cell content</div>\
+  <textarea rows=2 class="newfield cellinputcontent" value="cell content"></textarea>\
 </div>\
 '
+// using jQuery
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+var csrftoken = getCookie('csrftoken');
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
 function add_cell(){
   var cellinputs = $("#cellinputs")[0];
   cellinputs.innerHTML += cellinput_html;
@@ -23,10 +56,10 @@ $(function(){
   setup_inputs()
   $('#submit').click(function(){
     post = {}
-    post.title = $('#titlefield')[0].innerHTML;
-    post.tagstring = $('#tagfield')[0].innerHTML;
+    post.title = $('#titlefield')[0].value;
+    post.tagstring = $('#tagfield')[0].value;
     post.author = 'murtaza64' //TODO fix, uh, this whole thing
-    post.body = [];
+    post.cells = [];
     var cellfields = $('.cellfield');
     var cellinputnames = $('.cellinputname');
     var cellinputcontents = $('.cellinputcontent');
@@ -34,55 +67,80 @@ $(function(){
     for (var i = 0; i < cellfields.length; i++){
       cell = {}
       cellfield = cellfields[i]
-      cell.title = cellinputnames[i].innerHTML
-      cell.body = cellinputcontents[i].innerHTML
-      cell.type = +cellinputtypes[i].innerHTML
+      cell.title = cellinputnames[i].value;
+      cell.content = cellinputcontents[i].value;
+      if (this.innerHTML == 'Aa'){
+        cell.type = 0;
+      } else if (this.innerHTML == 'MD'){
+        cell.type = 1;
+      } else {
+        cell.type = 2;
+      }
       cell.lang = null
-      post.body.push(cell)
+      post.cells.push(cell)
     }
     console.log(post)
     $.ajax({
-      //TODO
-    })
+      method : "POST",
+      data: JSON.stringify(post),
+
+        //{post: post,
+        //csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()},
+
+      contentType: 'application/json',
+      processData: false,
+      success: function(){
+        console.log("ajax success");
+      },
+      error: function(){
+        console.log("ajax failure");
+      }
+    });
   });
 });
 
 function setup_inputs(){
-  $('.newfield').prop('contenteditable',true);
+  //$('.newfield').prop('contenteditable',true);
   $('.cellinputtype').click(function(){
-    if (this.innerHTML == '0'){
-      this.innerHTML = 1;
-    } else if (this.innerHTML == '1'){
-      this.innerHTML = 2;
+    var i = $('.cellinputtype').index(this)
+    if (this.innerHTML == 'Aa'){
+      this.innerHTML = 'MD';
+    } else if (this.innerHTML == 'MD'){
+      this.innerHTML = '{}';
+      $('.cellinputcontent')[i].style.fontFamily = "Consolas,monospace";
+      this.style.fontFamily = "Consolas,monospace";
     } else {
-      this.innerHTML = 0;
+      this.innerHTML = 'Aa';
+      $('.cellinputcontent')[i].style.fontFamily = "inherit";
+      this.style.fontFamily = "inherit";
     }
   });
-  function focus_inputs(plchldr){
-    f = function(){
-      if (this.innerHTML == plchldr){
-        this.innerHTML = "";
+  $('textarea').each(function () { //from Obsidian on StackOverflow
+      this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
+  }).on('input', function () {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+  });
+
+
+  function setup_placeholder(selector, plchldr){
+    $(selector).focus(function(){
+      if (this.value == plchldr){
+        this.value = "";
       }
       $(this).css('color', 'inherit');
-    }
-    return f;
-  }
-  function unfocus_inputs(plchldr){
-    f = function(){
-      if (this.innerHTML == ''){
+    });
+    $(selector).focusout(function(){
+      if (this.value == ""){
         $(this).css('color', '#909090');
-        this.innerHTML = plchldr;
+        this.value = plchldr;
       }
-    }
-    return f;
+    });
+    $(selector).val(plchldr);
   }
-  $('#titlefield').focus(focus_inputs("post title"));
-  $('#tagfield').focus(focus_inputs("#tag1, #tag2 ..."));
-  $('.cellinputname').focus(focus_inputs("cell name"));
-  $('.cellinputcontent').focus(focus_inputs("cell content"));
 
-  $('#titlefield').focusout(unfocus_inputs("post title"));
-  $('#tagfield').focusout(unfocus_inputs("#tag1, #tag2 ..."));
-  $('.cellinputname').focusout(unfocus_inputs("cell name"));
-  $('.cellinputcontent').focusout(unfocus_inputs("cell content"));
+  setup_placeholder("#titlefield", "post title");
+  setup_placeholder("#tagfield", "#tag1 #tag2 ...");
+  setup_placeholder(".cellinputname", "cell name");
+  setup_placeholder(".cellinputcontent", "cell content");
 }

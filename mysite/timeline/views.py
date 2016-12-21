@@ -5,8 +5,12 @@ from django.views.generic.base import TemplateResponseMixin
 from timeline.models import Post, Tag
 from django.contrib.auth.models import User
 from django.core import serializers
+from django.template import RequestContext
+from django.middleware.csrf import get_token
 import json, re
+import datetime
 from markdown2 import markdown
+
 
 def assemble_post(post):
     '''
@@ -15,20 +19,28 @@ def assemble_post(post):
     of cell dicts).
     '''
     #print(post.body)
-    body_dict = json.loads(post.body)
+    if post.body:
+        body_dict = json.loads(post.body)
     #print(body_dict)
-    cells = [c for c in body_dict['cells']]
-    for cell in cells:
-        t = cell['content']
-        if cell['type'] == 1:
-            t = markdown(t)
-            #print(t)
-        if cell['type'] == 0:
-            #print(t)
-            t = re.sub(r'\n', '<br>', t)
-            #print(t)
-        cell['content'] = t
-    tags = post.tags.all().order_by('name', '-lang')
+        try:
+            cells = [c for c in body_dict['cells']]
+        except KeyError:
+            cells = [dict(type=0, content='empty post')]
+        for cell in cells:
+            t = cell['content']
+            if cell['type'] == 1:
+                t = markdown(t)
+                #print(t)
+            if cell['type'] == 0:
+                #print(t)
+                t = re.sub(r'\n', '<br>', t)
+                #print(t)
+            cell['content'] = t
+    else:
+        cells = [dict(type=0, content='empty post')]
+
+    tags = post.tags.all().order_by('-lang', 'name')
+    print(tags)
     send_post = {'id': post.id, 'title': post.title, 'author': post.author,
         'date': post.date, 'tags': tags, 'body': enumerate(cells)}
     #print('assembled post')
@@ -132,9 +144,40 @@ class NewPostView(TemplateView):
         context = super(NewPostView, self).get_context_data(**kwargs)
         context['subtitle'] = '/new'
         context['title'] = 'new post | codeli.ne'
+        c = RequestContext(self.request)
+        print(context)
+        print(c)
         return context
     def post(self, request, *args, **kwargs):
         newpost = Post()
+        postdict = json.loads(str(request.body, 'utf-8'))
+        try:
+            newpost.author = User.objects.get(username=postdict['author'])
+            newpost.title = postdict['title']
+            newpost.date = datetime.datetime.now()
+        except Exception as e:
+            print('SOME VALIDATION ERROR')
+            print(e)
+            return JsonResponse(dict(error='true'))
+        newpost.save()
+        tags = postdict['tagstring'].split()
+        print(tags)
+        for tag in tags:
+            try:
+                tag = ''.join([c for c in tag if c in 'abcdefghijklmnopqrstuvwxyz1234567890-_.'])
+                tag_obj = Tag.objects.get(name=tag)
+            except Tag.DoesNotExist:
+                tag_obj = Tag()
+                tag_obj.name = tag
+                tag_obj.save()
+            newpost.tags.add(tag_obj)
+            print(tag)
+        print(postdict['cells'])
+        body = dict(cells=postdict['cells'])
+        newpost.body = json.dumps(body)
+        print(newpost)
+        newpost.save()
+        return JsonResponse(dict(a='b'))
 
 
 #TODO:40 tags, ajax/live page updates
