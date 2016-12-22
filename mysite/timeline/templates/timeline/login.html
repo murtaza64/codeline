@@ -6,7 +6,21 @@
     $(function(){
       $("#username").change(function(){
         $("#next").val("/user/"+$("#username").val());
-      })
+      });
+      setup_placeholder("#username", "username");
+      $("#password").focus(function(){
+        if (this.value == "password"){
+          this.value = "";
+          this.type = "password";
+        }
+        $(this).css('color', 'inherit');
+      }).focusout(function(){
+        if (this.value == ""){
+          $(this).css('color', '#909090');
+          this.value = "password";
+          this.type = "text";
+        }
+      }).val("password").css("color", "#909090");
     })
   </script>
 {% endblock %}
@@ -21,7 +35,7 @@
 <form method="POST">
   {% csrf_token %}
   <input class="loginfield" id="username" name="username" type="text">
-  <input class="loginfield" name="password" type="password">
+  <input class="loginfield" id="password" name="password" type="text">
   <br><br>
   <input type="submit" value="Login">
   <input type="hidden" id="next" name="next" value="/">

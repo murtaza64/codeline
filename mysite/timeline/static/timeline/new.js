@@ -85,22 +85,6 @@ function setup_ace(i){
     $(".cellinputlang")[i].last_correct_mode = $(".cellinputlang")[i].value.toLowerCase();
   });
 }
-function setup_placeholder(selector, plchldr){
-  $(selector).focus(function(){
-    if (this.value == plchldr){
-      this.value = "";
-    }
-    $(this).css('color', 'inherit');
-  }).focusout(function(){
-    if (this.value == ""){
-      $(this).css('color', '#909090');
-      this.value = plchldr;
-    }
-  })
-
-    $(selector).val(plchldr);
-    $(selector).css("color", "#909090");
-}
 function setup_inputs(i){
   setup_ace(i);
   $('.cellfield')[i].using_cell = true;
@@ -198,7 +182,7 @@ $(function(){
     if (post.title == POST_TITLE) post.title = "";
     post.tagstring = $('#tagfield')[0].value;
     if (post.tagstring == TAGS) post.tagstring = "untagged";
-    post.anonymous = false;
+    post.anonymous = $("#anonymousbox").val();
     post.cells = [];
     var cellfields = $('.cellfield');
     var cellinputnames = $('.cellinputname');
