@@ -45,7 +45,9 @@ def assemble_post(post):
     #print('assembled post')
     return send_post
 
+
 class JSONPostViewMixin(TemplateResponseMixin):
+
     def render_to_response(self, context, **response_kwargs):
         if self.request.GET.get('format') == 'json':
             return JsonResponse(
@@ -54,6 +56,7 @@ class JSONPostViewMixin(TemplateResponseMixin):
             )
         else:
             return super(JSONPostViewMixin, self).render_to_response(context, **response_kwargs)
+    
     def get_data(self, context):
         qs = context['object_list']
         j = []
@@ -72,22 +75,28 @@ class JSONPostViewMixin(TemplateResponseMixin):
         #print(j)
         return j
 
+
 class PostListView(JSONPostViewMixin, ListView):
     queryset = Post.objects.all().order_by('-date')
+    
     def get_context_data(self, **kwargs):
         context = super(PostListView, self).get_context_data(**kwargs)
         context['posts'] = [assemble_post(post) for post in context['object_list']]
         return context
 
+
 class GlobalTimelineView(PostListView):
     template_name = 'timeline/timeline.html'
+
     def get(self, *args, **kwargs):
         #import ipdb; ipdb.set_trace(context=9)
         return super(GlobalTimelineView, self).get(*args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super(GlobalTimelineView, self).get_context_data(**kwargs)
         context['title'] = 'codeli.ne'
         return context
+
 
 class SinglePostView(JSONPostViewMixin, DetailView):
     template_name = 'timeline/post_view.html'
@@ -101,6 +110,7 @@ class SinglePostView(JSONPostViewMixin, DetailView):
         context['subtitle'] = '/' + context['post']['title']
         context['title'] = '{} | codeli.ne'.format(context['post']['title'])
         return context
+
 
 class UserTimelineView(PostListView):
     template_name = 'timeline/user.html'
@@ -120,6 +130,7 @@ class UserTimelineView(PostListView):
 
 class TagTimelineView(PostListView):
     template_name = 'timeline/user.html'
+
     def get_queryset(self):
         tags = []
         queryset = []
@@ -137,8 +148,10 @@ class TagTimelineView(PostListView):
         context['title'] = '+'.join(args) + ' | codeli.ne'
         return context
 
+
 class NewPostView(TemplateView):
     template_name = 'timeline/new.html'
+
     def get_context_data(self, **kwargs):
         context = super(NewPostView, self).get_context_data(**kwargs)
         context['subtitle'] = '/new'
@@ -147,6 +160,7 @@ class NewPostView(TemplateView):
         print(context)
         print(c)
         return context
+
     def post(self, request, *args, **kwargs):
         newpost = Post()
         postdict = json.loads(str(request.body, 'utf-8'))

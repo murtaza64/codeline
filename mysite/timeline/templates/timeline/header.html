@@ -33,13 +33,16 @@
 					</div>
 					<hr/>
 					<div class="row">
+						{% block login %}
+						{% endblock %}
+					</div>
+					<hr/>
+					<div class="row">
 						<div class="container-fluid" style="padding:10px;">
-							<div class="well bs-sidebar" id="sidebar">
-								<ul class="nav nav-pills nav-stacked">
-									{% block sidebarlinks %}
-									{% endblock %}
-								</ul>
-							</div>
+							<ul class="nav nav-pills nav-stacked">
+								{% block sidebarlinks %}
+								{% endblock %}
+							</ul>
 						</div>
 					</div>
 			  </div>

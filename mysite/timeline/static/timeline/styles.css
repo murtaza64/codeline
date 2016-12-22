@@ -138,3 +138,11 @@ td{
   height: 25px;
   padding-top: 1px;
 }
+
+.loginlink {
+  color: #333333;
+}
+.loginlink:hover {
+  color: #888888;
+  text-decoration: none;
+}

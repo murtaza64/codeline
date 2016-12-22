@@ -1,21 +1,19 @@
 {% extends "timeline/header.html" %}
 {% block head %}
-  <title>codeli.ne</title>
+  {% load staticfiles %}
+  <!--<script type="text/javascript"> window.CSRF_TOKEN = "{% csrf_token %}"; </script>-->
+  <script src="{% static 'js/ace/ace.js' %}"></script>
+  <script src="{% static 'timeline/new.js' %}"></script>
 {% endblock %}
 {% block lefttitle %}
   {% include 'timeline/includes/lefttitle.html' %}
 {% endblock %}
 
-{% block login %}
-  {% include 'timeline/includes/login.html' %}
-{% endblock %}
-
 {% block sidebarlinks %}
   {% include 'timeline/includes/sidebarlinks.html' %}
 {% endblock %}
-
 {% block content %}
-  {% for post in posts %}
-      {% include 'timeline/includes/post.html' %}
-  {% endfor %}
+<form>
+  {{form.username}}
+</form>
 {% endblock %}
