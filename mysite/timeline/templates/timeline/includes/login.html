@@ -1,4 +1,13 @@
-<div class="container-fluid">
-    <a class='loginlink' href='/login'>login</a>
+<div class="row">
+    <div class="container-fluid">
+        {% if not user.is_authenticated %}
+        <a class="loginlink" href="/login">login</a>
+        {% else %}
+        <a class="loginlink" href="/user/{{user.get_username}}">
+            {{user.get_username}}
+        </a>
+        <a class="loginlink" href="/logout" style="float:right">logout</a>
+        {% endif %}
+    </div>  
 </div>
-
+<hr>

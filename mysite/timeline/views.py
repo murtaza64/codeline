@@ -4,6 +4,7 @@ from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.base import TemplateResponseMixin
 from timeline.models import Post, Tag
 from django.contrib.auth.models import User
+from django.contrib.auth import logout
 from django.core import serializers
 from django.template import RequestContext
 from django.middleware.csrf import get_token
@@ -45,7 +46,6 @@ def assemble_post(post):
     #print('assembled post')
     return send_post
 
-
 class JSONPostViewMixin(TemplateResponseMixin):
 
     def render_to_response(self, context, **response_kwargs):
@@ -55,6 +55,7 @@ class JSONPostViewMixin(TemplateResponseMixin):
                 **response_kwargs,
             )
         else:
+            #print(context.keys())
             return super(JSONPostViewMixin, self).render_to_response(context, **response_kwargs)
     
     def get_data(self, context):
@@ -81,7 +82,10 @@ class PostListView(JSONPostViewMixin, ListView):
     
     def get_context_data(self, **kwargs):
         context = super(PostListView, self).get_context_data(**kwargs)
+        #print(context)
+        #print(RequestContext(self.request))
         context['posts'] = [assemble_post(post) for post in context['object_list']]
+        #print(self.request)
         return context
 
 
@@ -95,6 +99,8 @@ class GlobalTimelineView(PostListView):
     def get_context_data(self, **kwargs):
         context = super(GlobalTimelineView, self).get_context_data(**kwargs)
         context['title'] = 'codeli.ne'
+        #print(RequestContext(self.request))
+        #print('CONTEXT', context)
         return context
 
 
@@ -113,7 +119,7 @@ class SinglePostView(JSONPostViewMixin, DetailView):
 
 
 class UserTimelineView(PostListView):
-    template_name = 'timeline/user.html'
+    template_name = 'timeline/timeline.html'
 
     def get_queryset(self):
         qs = super(UserTimelineView, self).get_queryset()
@@ -129,7 +135,7 @@ class UserTimelineView(PostListView):
         return context
 
 class TagTimelineView(PostListView):
-    template_name = 'timeline/user.html'
+    template_name = 'timeline/timeline.html'
 
     def get_queryset(self):
         tags = []
@@ -165,13 +171,16 @@ class NewPostView(TemplateView):
         newpost = Post()
         postdict = json.loads(str(request.body, 'utf-8'))
         try:
-            newpost.author = User.objects.get(username=postdict['author'])
+            if request.user.is_authenticated and not postdict['anonymous']:
+                newpost.author = request.user
+            else:
+                newpost.author = None
             newpost.title = postdict['title']
             newpost.date = datetime.datetime.now()
         except Exception as e:
             print('SOME VALIDATION ERROR')
             print(e)
-            return JsonResponse(dict(error='true'))
+            return JsonResponse(dict(success=False))
         newpost.save()
         if not newpost.title:
             newpost.title = 'untitled '+str(newpost.id)
@@ -197,5 +206,9 @@ class NewPostView(TemplateView):
         newpost.save()
         return JsonResponse(dict(success=True, link='http://'+request.get_host()+'/'+str(newpost.id)))
 
+def logout_view(request):
+    logout(request)
+    return redirect('/')
 
 #TODO:40 tags, ajax/live page updates
+

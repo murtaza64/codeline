@@ -12,5 +12,13 @@ urlpatterns = [
     url(r'^new/$', views.NewPostView.as_view(), name='new'),
     url(r'^user/(?P<usr>\w+)$', views.UserTimelineView.as_view(), name='user'),
     url(r'^tag/(?:([a-zA-Z0-9.-_]+)\+)?([a-zA-Z0-9.-_]+)$', views.TagTimelineView.as_view(), name='user'),
-    url(r'^login/$', auth_views.login, {'template_name': 'timeline/login.html'})
+    url(r'^login/$', auth_views.login, 
+    {
+        'template_name': 'timeline/login.html',
+        'extra_context': {
+            'title': 'login | codeli.ne',
+            'subtitle': '/login'
+        }
+    }, name='login'),
+    url(r'^logout/$', views.logout_view, name='logout')
 ]

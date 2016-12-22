@@ -146,3 +146,9 @@ td{
   color: #888888;
   text-decoration: none;
 }
+.loginfield{
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #d8d8d8;
+  width:100%;
+}

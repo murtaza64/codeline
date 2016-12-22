@@ -2,8 +2,13 @@
 {% block head %}
   {% load staticfiles %}
   <!--<script type="text/javascript"> window.CSRF_TOKEN = "{% csrf_token %}"; </script>-->
-  <script src="{% static 'js/ace/ace.js' %}"></script>
-  <script src="{% static 'timeline/new.js' %}"></script>
+  <script>
+    $(function(){
+      $("#username").change(function(){
+        $("#next").val("/user/"+$("#username").val());
+      })
+    })
+  </script>
 {% endblock %}
 {% block lefttitle %}
   {% include 'timeline/includes/lefttitle.html' %}
@@ -13,7 +18,12 @@
   {% include 'timeline/includes/sidebarlinks.html' %}
 {% endblock %}
 {% block content %}
-<form>
-  {{form.username}}
+<form method="POST">
+  {% csrf_token %}
+  <input class="loginfield" id="username" name="username" type="text">
+  <input class="loginfield" name="password" type="password">
+  <br><br>
+  <input type="submit" value="Login">
+  <input type="hidden" id="next" name="next" value="/">
 </form>
 {% endblock %}

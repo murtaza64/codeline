@@ -198,7 +198,7 @@ $(function(){
     if (post.title == POST_TITLE) post.title = "";
     post.tagstring = $('#tagfield')[0].value;
     if (post.tagstring == TAGS) post.tagstring = "untagged";
-    post.author = 'murtaza64' //TODO fix, uh, this whole thing
+    post.anonymous = false;
     post.cells = [];
     var cellfields = $('.cellfield');
     var cellinputnames = $('.cellinputname');
