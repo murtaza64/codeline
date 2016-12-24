@@ -79,6 +79,7 @@ class JSONPostViewMixin(TemplateResponseMixin):
 
 class PostListView(JSONPostViewMixin, ListView):
     queryset = Post.objects.all().order_by('-date')
+    is_paginated = True #TODO
     
     def get_context_data(self, **kwargs):
         context = super(PostListView, self).get_context_data(**kwargs)
@@ -102,7 +103,6 @@ class GlobalTimelineView(PostListView):
         #print(RequestContext(self.request))
         #print('CONTEXT', context)
         return context
-
 
 class SinglePostView(JSONPostViewMixin, DetailView):
     template_name = 'timeline/post_view.html'
