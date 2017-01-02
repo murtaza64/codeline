@@ -67,7 +67,10 @@ class JSONPostViewMixin(TemplateResponseMixin):
             d['model'] = 'timeline.post'
             fields = {}
             fields['title'] = p.title
-            fields['author'] = p.author.pk
+            if p.author is not None:
+                fields['author'] = p.author.name
+            else:
+                fields['author'] = None
             fields['tags'] = [t.id for t in p.tags.all()]
             fields['date'] = p.date
             fields['body'] = json.loads(p.body)

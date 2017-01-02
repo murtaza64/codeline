@@ -1,0 +1,125 @@
+cells:
+- content: |-
+    int main(void){
+        for(int i = 0; i<12; i++){
+            printf("this code literally cannot run because i havent imported stdio.h");
+        }
+        return 0;
+    }
+  lang: null
+  title: c
+  type: 2
+- content: |
+    class NewPostView(TemplateView):
+        template_name = 'timeline/new.html'
+        def get_context_data(self, **kwargs):
+            context = super(NewPostView, self).get_context_data(**kwargs)
+            context['subtitle'] = '/new'
+            context['title'] = 'new post | codeli.ne'
+            c = RequestContext(self.request)
+            print(context)
+            print(c)
+            return context
+        def post(self, request, *args, **kwargs):
+            newpost = Post()
+            postdict = json.loads(str(request.body, 'utf-8'))
+            try:
+                newpost.author = User.objects.get(username=postdict['author'])
+                newpost.title = postdict['title']
+                newpost.date = datetime.datetime.now()
+            except Exception as e:
+                print('SOME VALIDATION ERROR')
+                print(e)
+                return JsonResponse(dict(error='true'))
+            newpost.save()
+            if not newpost.title:
+                newpost.title = 'untitled '+str(newpost.id)
+            tags = postdict['tagstring'].split()
+            print(tags)
+            for tag in tags:
+                try:
+                    tag = ''.join([c for c in tag if c in 'abcdefghijklmnopqrstuvwxyz1234567890-_.'])
+                    tag_obj = Tag.objects.get(name=tag)
+                except Tag.DoesNotExist:
+                    tag_obj = Tag()
+                    tag_obj.name = tag
+                    tag_obj.save()
+                newpost.tags.add(tag_obj)
+                print(tag)
+            print(postdict['cells'])
+            if (not postdict['cells']):
+                newpost.delete()
+                return JsonResponse(dict(success=False, error='empty post'))
+            body = dict(cells=postdict['cells'])
+            newpost.body = json.dumps(body)
+            print(newpost)
+            newpost.save()
+            return JsonResponse(dict(success=True, link='http://'+request.get_host()+'/'+str(newpost.id)))
+  lang: null
+  title: py
+  type: 2
+- content: |-
+    ## some markdown
+    * just
+    * for
+    * bants
+  lang: null
+  title: md
+  type: 1
+- content: |
+    function setup_inputs(i){
+      //$('.newfield').prop('contenteditable',true);
+      $($('.cellinputtype')[i]).click(function(){
+        var i = $('.cellinputtype').index(this)
+        if (this.innerHTML == 'Aa'){
+          this.innerHTML = 'MD';
+          $($('.cellinputlang')[i]).val("markdown").attr("disabled", true);
+        } else if (this.innerHTML == 'MD'){
+          this.innerHTML = '{}';
+          this.style.paddingTop = 0;
+          this.style.fontFamily = "Consolas,monospace";
+          $($('.cellinputlang')[i]).val("language").attr("disabled", false).css('color', '#909090');
+
+        } else {
+          this.style.paddingTop = 2;
+          this.innerHTML = 'Aa';
+          $($('.cellinputlang')[i]).val("text").css("color", "inherit").attr("disabled", true);
+          //$('.cellinputcontent')[i].style.fontFamily = "inherit";
+          this.style.fontFamily = "inherit";
+        }
+        $($('.cellinputlang')[i]).change();
+      });
+
+      $('textarea').each(function () { //from Obsidian on StackOverflow
+          this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
+      }).on('input', function () {
+          this.style.height = 'auto';
+          this.style.height = (this.scrollHeight) + 'px';
+      });
+      setup_placeholder($('.cellinputname')[i], CELL_NAME);
+      setup_placeholder($('.cellinputlang')[i], LANG);
+      $($('.cellinputlang')[i]).change(function(){
+        mode = this.value.toLowerCase()
+          if (mode == this.last_correct_mode) {
+            this.style.borderColor = "#409060";
+            return;
+          }
+          this.style.borderColor = "#c06060";
+          console.log('cellinputlang change');
+          var editor = ace.edit("ace_editor" + i.toString());
+          if (this.value == LANG || this.value == ""){
+            this.style.borderColor = "#d8d8d8";
+            return;
+          }
+          if (mode == "c" || mode == "c++" || mode == "cpp"){
+            editor.getSession().setMode("ace/mode/c_cpp");
+            return;
+          }
+          console.log("asking for mode change", editor);
+          editor.getSession().setMode("ace/mode/" + mode);
+      }).val("text").css("color", "inherit").css("border-color", "#409060").attr("disabled", true);
+      //setup_placeholder(".cellinputcontent", CELL_CONTENT);
+    }
+  lang: null
+  title: js
+  type: 2
