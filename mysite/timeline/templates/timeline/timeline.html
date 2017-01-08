@@ -15,6 +15,9 @@
 {% endblock %}
 
 {% block content %}
+  {% if not posts %}
+    no posts returned
+  {% endif %}
   {% for post in posts %}
       {% include 'timeline/includes/post.html' %}
   {% endfor %}

@@ -17,7 +17,6 @@ CELLINPUT_HTML = '\
   <div class="cic_container">\
     <div class="ace" id="ace_editor0"></div>\
   </div>';
-// using jQuery
 
 TEXTAREA_HTML = '<textarea rows=2 class="newfield cellinputcontent"></textarea>';
 
@@ -26,7 +25,12 @@ var CELL_CONTENT = "cell content";
 var TAGS = "tag1 tag2 ...";
 var POST_TITLE = "post title";
 var LANG = "language"
-
+function modeify(mode_str){
+  if (mode_str == "c" || mode == "c++" || mode == "cpp"){
+    return "c_cpp";
+  }
+  return mode_str;
+}
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -82,7 +86,7 @@ function setup_ace(i){
   editor.getSession().on("changeMode", function(){
     console.log('changed mode');
     $($(".cellinputlang")[i]).css("border-color", "#409060");
-    $(".cellinputlang")[i].last_correct_mode = $(".cellinputlang")[i].value.toLowerCase();
+    $(".cellinputlang")[i].last_correct_mode = modeify($(".cellinputlang")[i].value.toLowerCase());
   });
 }
 function setup_inputs(i){
@@ -115,7 +119,7 @@ function setup_inputs(i){
 
   $($('.cellinputlang')[i]).change(function(){
     mode = this.value.toLowerCase()
-      if (mode == this.last_correct_mode) {
+      if (modeify(mode) == this.last_correct_mode) {
         this.style.borderColor = "#409060";
         return;
       }
@@ -126,12 +130,8 @@ function setup_inputs(i){
         this.style.borderColor = "#d8d8d8";
         return;
       }
-      if (mode == "c" || mode == "c++" || mode == "cpp"){
-        editor.getSession().setMode("ace/mode/c_cpp");
-        return;
-      }
       console.log("asking for mode change", editor);
-      editor.getSession().setMode("ace/mode/" + mode);
+      editor.getSession().setMode("ace/mode/" + modeify(mode));
   });
 
   $($('.removecell')[i]).click(function remove_cell_click(){

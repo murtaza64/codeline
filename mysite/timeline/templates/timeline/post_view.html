@@ -13,5 +13,8 @@
 {% endblock %}
 
 {% block content %}
+  {% if not post %}
+    no posts returned
+  {% endif %}
   {% include 'timeline/includes/post.html' %}
 {% endblock %}

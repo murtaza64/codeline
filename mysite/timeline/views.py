@@ -5,6 +5,7 @@ from django.views.generic.base import TemplateResponseMixin
 from timeline.models import Post, Tag
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
+from django.contrib.auth.forms import UserCreationForm
 from django.core import serializers
 from django.template import RequestContext
 from django.middleware.csrf import get_token
@@ -19,10 +20,8 @@ def assemble_post(post):
     to the template (unpacks post.body into an enumerated iterable
     of cell dicts).
     '''
-    #print(post.body)
     if post.body:
         body_dict = json.loads(post.body)
-    #print(body_dict)
         try:
             cells = [c for c in body_dict['cells']]
         except KeyError:
@@ -31,19 +30,15 @@ def assemble_post(post):
             t = cell['content']
             if cell['type'] == 1:
                 t = markdown(t)
-                #print(t)
             if cell['type'] == 0:
-                #print(t)
                 t = re.sub(r'\n', '<br>', t)
-                #print(t)
             cell['content'] = t
     else:
         cells = [dict(type=0, content='empty post')]
 
     tags = post.tags.all().order_by('-lang', 'name')
     send_post = {'id': post.id, 'title': post.title, 'author': post.author,
-        'date': post.date, 'tags': tags, 'body': enumerate(cells)}
-    #print('assembled post')
+        'date': post.date, 'private': post.private, 'tags': tags, 'body': enumerate(cells)}
     return send_post
 
 class JSONPostViewMixin(TemplateResponseMixin):
@@ -74,9 +69,9 @@ class JSONPostViewMixin(TemplateResponseMixin):
             fields['tags'] = [t.id for t in p.tags.all()]
             fields['date'] = p.date
             fields['body'] = json.loads(p.body)
+            fields['private'] = p.private
             d['fields'] = fields
             j.append(d)
-        #print(j)
         return j
 
 
@@ -86,10 +81,9 @@ class PostListView(JSONPostViewMixin, ListView):
     
     def get_context_data(self, **kwargs):
         context = super(PostListView, self).get_context_data(**kwargs)
-        #print(context)
-        #print(RequestContext(self.request))
         context['posts'] = [assemble_post(post) for post in context['object_list']]
-        #print(self.request)
+        #context['posts'] = [p for p in context['posts'] if 
+            #not(p['private']) or p['author'] is self.request.user]
         return context
 
 
@@ -97,14 +91,11 @@ class GlobalTimelineView(PostListView):
     template_name = 'timeline/timeline.html'
 
     def get(self, *args, **kwargs):
-        #import ipdb; ipdb.set_trace(context=9)
         return super(GlobalTimelineView, self).get(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(GlobalTimelineView, self).get_context_data(**kwargs)
         context['title'] = 'codeli.ne'
-        #print(RequestContext(self.request))
-        #print('CONTEXT', context)
         return context
 
 class SinglePostView(JSONPostViewMixin, DetailView):
@@ -116,7 +107,7 @@ class SinglePostView(JSONPostViewMixin, DetailView):
         context['post'] = assemble_post(context['object'])
         #HACK: makes SinglePostView work nicely with JSONPostViewMixin
         context['object_list'] = [context['object']]
-        context['subtitle'] = '/' + context['post']['title']
+        context['subtitle'] = '/' + str(context['post']['id'])
         context['title'] = '{} | codeli.ne'.format(context['post']['title'])
         return context
 
@@ -134,8 +125,15 @@ class UserTimelineView(PostListView):
         print('USER TIMELINE VIEW')
         context = super(UserTimelineView, self).get_context_data(**kwargs)
         context['subtitle'] = '/user/' + self.kwargs['usr']
-        context['title'] = '{}\'s codli.ne'.format(self.kwargs['usr'])
+        context['title'] = '{}\'s codeli.ne'.format(self.kwargs['usr'])
         return context
+
+class UserTitleTimelineView(UserTimelineView):
+    def get_queryset(self):
+        qs = super(UserTitleTimelineView, self).get_queryset()
+        title = self.kwargs['title']
+        qs = qs.filter(title__in=[title, title.replace('_', ' ')])
+        return qs
 
 class TagTimelineView(PostListView):
     template_name = 'timeline/timeline.html'
@@ -144,7 +142,11 @@ class TagTimelineView(PostListView):
         tags = []
         queryset = []
         qs = super(TagTimelineView, self).get_queryset()
-        tags = [Tag.objects.get(name=t) for t in [a for a in self.args if a]]
+        for t in [a for a in self.args[0].split('+') if a]:
+            try:
+                tags.append(Tag.objects.get(name=t))
+            except Tag.DoesNotExist:
+                pass
         qs = qs.filter(tags__in=tags)
         print(qs)
         return qs
@@ -209,6 +211,19 @@ class NewPostView(TemplateView):
         newpost.save()
         return JsonResponse(dict(success=True, link='http://'+request.get_host()+'/'+str(newpost.id)))
 
+def register_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            return redirect('/login')
+    if request.method == 'GET':
+        form = UserCreationForm(attrs={'class': 'loginfield'})
+    return render(request, 'timeline/register.html', {
+        'form': form, 
+        'title': 'register | codeli.ne',
+        'subtitle': '/register'
+    })
+    
 def logout_view(request):
     logout(request)
     return redirect('/')

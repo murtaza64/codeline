@@ -5,14 +5,15 @@ import timeline.views as views
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    url(r'^$', views.GlobalTimelineView.as_view(), name = 'timeline'),
-    url(r'^list/$', views.PostListView.as_view(), name = 'list'),
-    url(r'^(?P<pk>\d+)$', views.SinglePostView.as_view(), name = 'post_view'),
+    url(r'^$', views.GlobalTimelineView.as_view(), name='timeline'),
+    url(r'^list/?$', views.PostListView.as_view(), name='list'),
+    url(r'^(?P<pk>\d+)/?$', views.SinglePostView.as_view(), name='post_view'),
     #url(r'^test/', views.test, name = 'test'),
-    url(r'^new/$', views.NewPostView.as_view(), name='new'),
-    url(r'^user/(?P<usr>\w+)$', views.UserTimelineView.as_view(), name='user'),
-    url(r'^tag/(?:([a-zA-Z0-9.-_]+)\+)?([a-zA-Z0-9.-_]+)$', views.TagTimelineView.as_view(), name='user'),
-    url(r'^login/$', auth_views.login, 
+    url(r'^new/?$', views.NewPostView.as_view(), name='new'),
+    url(r'^user/(?P<usr>\w+)/?$', views.UserTimelineView.as_view(), name='user'),
+    url(r'^user/(?P<usr>\w+)/(?P<title>[a-zA-Z0-9.\-()\[\]{}_]+)$', views.UserTitleTimelineView.as_view(), name='user'),
+    url(r'^tag/([a-zA-Z0-9.\-_+]+)$', views.TagTimelineView.as_view(), name='user'),
+    url(r'^login/?$', auth_views.login, 
     {
         'template_name': 'timeline/login.html',
         'extra_context': {
@@ -20,5 +21,6 @@ urlpatterns = [
             'subtitle': '/login'
         }
     }, name='login'),
+    url(r'^register/$', views.register_view, name='register'),
     url(r'^logout/$', views.logout_view, name='logout')
 ]

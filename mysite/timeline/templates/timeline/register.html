@@ -1,0 +1,40 @@
+{% extends "timeline/header.html" %}
+{% block head %}
+  {% load staticfiles %}
+  <!--<script type="text/javascript"> window.CSRF_TOKEN = "{% csrf_token %}"; </script>-->
+  <script>
+    $(function(){
+      $("#username").change(function(){
+        $("#next").val("/user/"+$("#username").val());
+      });
+      setup_placeholder("#username", "username");
+      $("#password").focus(function(){
+        if (this.value == "password"){
+          this.value = "";
+          this.type = "password";
+        }
+        $(this).css('color', 'inherit');
+      }).focusout(function(){
+        if (this.value == ""){
+          $(this).css('color', '#909090');
+          this.value = "password";
+          this.type = "text";
+        }
+      }).val("password").css("color", "#909090");
+    })
+  </script>
+{% endblock %}
+{% block lefttitle %}
+  {% include 'timeline/includes/lefttitle.html' %}
+{% endblock %}
+
+{% block sidebarlinks %}
+  {% include 'timeline/includes/sidebarlinks.html' %}
+{% endblock %}
+{% block content %}
+<form method="POST">
+  {{form.username}}
+  {{form.password1}}
+  {{form.password2}}
+</form>
+{% endblock %}

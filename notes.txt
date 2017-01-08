@@ -1,2 +1,6 @@
-syntax: highlight.js
-text editor: ace
+TODO:
+    register
+    private posts
+    ajax timeline infinite scroll
+    live filtering
+    tag parsing /new ???
