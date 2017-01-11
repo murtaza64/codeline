@@ -213,11 +213,11 @@ class NewPostView(TemplateView):
 
 def register_view(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = UserCreationForm(request.POST) #TODO custom user form
         if form.is_valid():
             return redirect('/login')
     if request.method == 'GET':
-        form = UserCreationForm(attrs={'class': 'loginfield'})
+        form = UserCreationForm(attrs={'class': 'loginfield'}) #TODO
     return render(request, 'timeline/register.html', {
         'form': form, 
         'title': 'register | codeli.ne',
