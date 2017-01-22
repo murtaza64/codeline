@@ -4,4 +4,4 @@ venv/
 .DS_Store
 *.swp
 .vscode/
-.STATIC_FILES/
+STATIC_FILES/
