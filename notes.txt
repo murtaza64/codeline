@@ -3,4 +3,5 @@ TODO:
     private posts
     ajax timeline infinite scroll
     live filtering
+    add tag of language automatically
     tag parsing /new ???

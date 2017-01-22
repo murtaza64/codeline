@@ -1,17 +1,19 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
-from django.views.generic import ListView, DetailView, TemplateView
-from django.views.generic.base import TemplateResponseMixin
-from timeline.models import Post, Tag
-from django.contrib.auth.models import User
+import datetime
+import json
+import re
+
 from django.contrib.auth import logout
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.core import serializers
-from django.template import RequestContext
+from django.http import JsonResponse
 from django.middleware.csrf import get_token
-import json, re
-import datetime
+from django.shortcuts import redirect, render
+from django.template import RequestContext
+from django.views.generic import DetailView, ListView, TemplateView
+from django.views.generic.base import TemplateResponseMixin
 from markdown2 import markdown
+from timeline.models import Post, Tag
 
 
 def assemble_post(post):
@@ -63,12 +65,15 @@ class JSONPostViewMixin(TemplateResponseMixin):
             fields = {}
             fields['title'] = p.title
             if p.author is not None:
-                fields['author'] = p.author.name
+                fields['author'] = p.author.username
             else:
                 fields['author'] = None
             fields['tags'] = [t.id for t in p.tags.all()]
             fields['date'] = p.date
-            fields['body'] = json.loads(p.body)
+            if p.body and p.body != '{}':
+                fields['body'] = json.loads(p.body)
+            else:
+                fields['body'] = {'cells':[]}
             fields['private'] = p.private
             d['fields'] = fields
             j.append(d)
@@ -77,7 +82,7 @@ class JSONPostViewMixin(TemplateResponseMixin):
 
 class PostListView(JSONPostViewMixin, ListView):
     queryset = Post.objects.all().order_by('-date')
-    is_paginated = True #TODO
+    paginate_by = 20 #TODO
     
     def get_context_data(self, **kwargs):
         context = super(PostListView, self).get_context_data(**kwargs)
@@ -176,7 +181,10 @@ class NewPostView(TemplateView):
         newpost = Post()
         postdict = json.loads(str(request.body, 'utf-8'))
         try:
+            print('USER', request.user, request.user.is_authenticated)
+            print(postdict)
             if request.user.is_authenticated and not postdict['anonymous']:
+                print('user is authenticated')
                 newpost.author = request.user
             else:
                 newpost.author = None
@@ -211,13 +219,20 @@ class NewPostView(TemplateView):
         newpost.save()
         return JsonResponse(dict(success=True, link='http://'+request.get_host()+'/'+str(newpost.id)))
 
+def live_view(request):
+    return render(request, 'timeline/live.html', {
+        'title': 'codeli.ne',
+        'subtitle': '/live'
+    })
+
 def register_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST) #TODO custom user form
         if form.is_valid():
             return redirect('/login')
     if request.method == 'GET':
-        form = UserCreationForm(attrs={'class': 'loginfield'}) #TODO
+        form = UserCreationForm() #TODO attrs={'class': 'loginfield'}
+    print(form)
     return render(request, 'timeline/register.html', {
         'form': form, 
         'title': 'register | codeli.ne',
@@ -229,4 +244,3 @@ def logout_view(request):
     return redirect('/')
 
 #TODO:40 tags, ajax/live page updates
-

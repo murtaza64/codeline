@@ -4,11 +4,12 @@
   <!--<script type="text/javascript"> window.CSRF_TOKEN = "{% csrf_token %}"; </script>-->
   <script>
     $(function(){
-      $("#username").change(function(){
-        $("#next").val("/user/"+$("#username").val());
-      });
+      temp_username = $("#username").val();
       setup_placeholder("#username", "username");
-      $("#password").focus(function(){
+      if (temp_username != "username" && temp_username != ""){
+        $("#username").val(temp_username).css("color", "inherit");
+      }
+      $("#password1").focus(function(){
         if (this.value == "password"){
           this.value = "";
           this.type = "password";
@@ -21,6 +22,19 @@
           this.type = "text";
         }
       }).val("password").css("color", "#909090");
+      $("#password2").focus(function(){
+        if (this.value == "repeat password"){
+          this.value = "";
+          this.type = "password";
+        }
+        $(this).css('color', 'inherit');
+      }).focusout(function(){
+        if (this.value == ""){
+          $(this).css('color', '#909090');
+          this.value = "repeat password";
+          this.type = "text";
+        }
+      }).val("repeat password").css("color", "#909090");
     })
   </script>
 {% endblock %}
@@ -33,8 +47,19 @@
 {% endblock %}
 {% block content %}
 <form method="POST">
-  {{form.username}}
-  {{form.password1}}
-  {{form.password2}}
+  {% csrf_token %}
+  
+  <input class="loginfield" id="username" name="{{form.username.name}}" 
+  value="{% if form.username.value %}{{form.username.value}}{% endif %}" type="text">
+  <input class="loginfield" id="password1" name="{{form.password1.name}}" 
+  value="password" type="text">
+  <input class="loginfield" id="password2" name="{{form.password2.name}}" 
+  value="repeat password" type="text">
+  <br><br>
+  <input type='submit'>
+  <br><br>
+  {% for error in form.errors.password2 %}
+    <p style='color:#c06060;'>{{error}}</p>
+  {% endfor %}
 </form>
 {% endblock %}

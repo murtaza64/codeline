@@ -1,0 +1,22 @@
+{% extends "timeline/header.html" %}
+{% block head %}
+  <title>{{title}}</title>
+  {% load staticfiles %}
+  <script src="{% static 'timeline/live.js' %}"></script>
+{% endblock %}
+{% block lefttitle %}
+  {% include 'timeline/includes/lefttitle.html' %}
+{% endblock %}
+
+{% block login %}
+  {% include 'timeline/includes/login.html' %}
+{% endblock %}
+
+{% block sidebarlinks %}
+  {% include 'timeline/includes/sidebarlinks.html' %}
+{% endblock %}
+
+{% block content %}
+  <div id="posts">
+  </div>
+{% endblock %}
