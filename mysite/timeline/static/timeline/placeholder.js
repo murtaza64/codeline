@@ -1,3 +1,5 @@
+var $ = require('jquery')
+
 function setup_placeholder(selector, plchldr){
   $(selector).focus(function(){
     if (this.value == plchldr){
@@ -14,3 +16,4 @@ function setup_placeholder(selector, plchldr){
     $(selector).val(plchldr);
     $(selector).css("color", "#909090");
 }
+module.exports = setup_placeholder

@@ -1,7 +1,6 @@
 require('ace-builds/src-min/ace.js')
-require('highlight.js')
-require('jquery')
-require('./helpers.js')
+var $ = require('jquery')
+var setup_placeholder = require('./placeholder.js')
 
 CELLINPUT_HTML = '\
 <div class="container-fluid cellfield" >\
@@ -42,7 +41,7 @@ function getCookie(name) {
     if (document.cookie && document.cookie !== '') {
         var cookies = document.cookie.split(';');
         for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
+            var cookie = $.trim(cookies[i]);
             // Does this cookie string begin with the name we want?
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));

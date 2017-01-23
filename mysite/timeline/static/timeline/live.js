@@ -1,8 +1,7 @@
-require('handlebars')
-require('highlight.js')
-require('jquery')
-require('./helpers.js')
-
+var Handlebars = require('handlebars')
+var hljs = require('highlight.js')
+var $ = require('jquery')
+var setup_placeholder = require('./placeholder.js')
 
 var next_page = 1;
 var base_url = '/';
@@ -78,6 +77,9 @@ function extend_page(){
             //console.log(data);
             for (var i = 0; i < data.data.length; i++){
                 //console.log(data.data[i]);
+                if (!data.data[i].fields.body.cells.length){
+                    data.data[i].fields.body = {cells: [{content: 'empty post'}]}
+                }
                 $('#posts').append(post_template(data.data[i].fields));
                 if (!rehighlighting){
                     rehighlight()
