@@ -20,11 +20,12 @@ CELLINPUT_HTML = '\
 
 TEXTAREA_HTML = '<textarea rows=2 class="newfield cellinputcontent"></textarea>';
 
-var CELL_NAME = "cell name";
-var CELL_CONTENT = "cell content";
-var TAGS = "tag1 tag2 ...";
-var POST_TITLE = "post title";
-var LANG = "language"
+CELL_NAME = "cell name";
+CELL_CONTENT = "cell content";
+TAGS = "tag1 tag2 ...";
+POST_TITLE = "post title";
+LANG = "language";
+
 function modeify(mode_str){
   if (mode_str == "c" || mode == "c++" || mode == "cpp"){
     return "c_cpp";
@@ -134,22 +135,21 @@ function setup_inputs(i){
       editor.getSession().setMode("ace/mode/" + modeify(mode));
   });
 
-  $($('.removecell')[i]).click(function remove_cell_click(){
+  $($('.removecell')[i]).on("click.new", function remove_cell_click(){
     this.style.background = "linear-gradient(#e0b0b0, #c8a0a0)";
     this.style.borderColor = "#a85050";
-    $(this).click(function delete_cell(){
+    $(this).on("click.new", function delete_cell(){
       n = $('.cellfield').length
       /*for (var j = i+1; j < n; j++){ //cascade ids for ace editors
         $('.ace')[j].id="ace_editor"+(j-1).toString();
       }*/
       $($('.cellfield')[i]).css('display', 'none');
       $('.cellfield')[i].using_cell = false;
-
     }).mouseleave(function(){
       this.style.background = "linear-gradient(#e8e8e8, #d6d6d6)";
       this.style.borderColor = "#b8b8b8";
-      $(this).off("click");
-      $(this).click(remove_cell_click)
+      $(this).off("click.new");
+      $(this).on("click.new", remove_cell_click);
     })
   });
 
@@ -197,7 +197,7 @@ $(function(){
         var editor = ace.edit("ace_editor" + i.toString());
         cell.content = editor.getValue();
         if (cell.content == CELL_CONTENT) cell.content = "";
-        cell.lang = cellinputlangs[i]
+        cell.lang = cellinputlangs[i].value;
         if (cell.lang == LANG) cell.lang = "";
         type_btn = cellinputtypes[i]
         if (type_btn.innerHTML == 'Aa'){
@@ -215,7 +215,7 @@ $(function(){
     }
     console.log(post)
     $.ajax({
-      method : "POST",
+      method: "POST",
       data: JSON.stringify(post),
 
         //{post: post,

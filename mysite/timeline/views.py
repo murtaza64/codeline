@@ -68,10 +68,13 @@ class JSONPostViewMixin(TemplateResponseMixin):
                 fields['author'] = p.author.username
             else:
                 fields['author'] = None
-            fields['tags'] = [t.id for t in p.tags.all()]
+            fields['tags'] = [{'name': t.name, 'lang': t.lang} for t in p.tags.all()]
             fields['date'] = p.date
             if p.body and p.body != '{}':
                 fields['body'] = json.loads(p.body)
+                for cell in fields['body']['cells']:
+                    if cell['type'] == 2:
+                        cell['is_code'] = True
             else:
                 fields['body'] = {'cells':[]}
             fields['private'] = p.private

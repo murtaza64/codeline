@@ -1,0 +1,41 @@
+{% verbatim %} <!--necessary to prevent Django from trying to parse the handlebars template-->
+<p class="posttitle">
+  <a class="title" href="/{{id}}">{{title}}</a>
+</p>
+<p class="postdate">
+  {{#if author}}
+  <a class="datelink" href="/user/{{author}}/">{{author}}</a> - 
+  {{/if}}
+  {{#easydate}}{{date}}{{/easydate}} <!-- TODO |date:'Y-m-d' -->
+</p>
+<p class="posttags">
+  {{#each tags as |tag|}}
+  <a class="taglink{{#if tag.lang}} lang{{/if}}" href="/tag/{{tag.name}}">#{{tag.name}}</a>
+  {{/each}}
+</p>
+
+<div class="container-fluid post">
+  {{#each body.cells as |cell i|}}
+      <!-- {% if cell.title%}
+        <div class="container-fluid">
+          <h5 style="margin-top: 0; margin-bottom: 5px;">{{cell.title}}</h5>
+        </div>
+      {% endif %} -->
+
+      {{#if cell.is_code}}
+          <pre class="codecell"><div class="cellindex code">{{i}}{{#if cell.title}} - {{cell.title}}{{/if}}</div><code class="unhighlighted hljs {{cell.lang}}">{{cell.content}}</code></pre>
+      {{else}}
+        <div class="container-fluid cell text">
+          <div class="cellindex">
+              {{i}}{{#if cell.title}} - {{cell.title}}{{/if}}
+          </div>
+          <p>
+              {{cell.content}}
+          </p> <!--TODO:30 make sure input is safe-->
+        </div>
+      {{/if}}
+  {{/each}}
+  <div style="margin-top:-10px;"></div>
+</div>
+<br>
+{% endverbatim %}
