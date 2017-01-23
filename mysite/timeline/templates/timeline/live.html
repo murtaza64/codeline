@@ -2,8 +2,7 @@
 {% block head %}
   <title>{{title}}</title>
   {% load staticfiles %}
-  <script src="{% static 'timeline/live.js' %}"></script>
-  <script src="{% static 'js/handlebars.min.js'%}"></script>
+  <script src="{% static 'timeline/live_compiled.js' %}"></script>
   <script id="post_template" type="text/x-handlebars-template">
     {% include 'timeline/includes/post.handlebars' %}
   </script>

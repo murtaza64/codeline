@@ -1,3 +1,8 @@
+require('ace-builds/src-min/ace.js')
+require('highlight.js')
+require('jquery')
+require('./helpers.js')
+
 CELLINPUT_HTML = '\
 <div class="container-fluid cellfield" >\
   <div class="cellinputmeta">\

@@ -1,3 +1,9 @@
+require('handlebars')
+require('highlight.js')
+require('jquery')
+require('./helpers.js')
+
+
 var next_page = 1;
 var base_url = '/';
 var post_template;
@@ -7,6 +13,8 @@ var loading_page = false;
 var rehighlight_timer = null;
 var rehighlighting = false;
 var more_pages = true;
+
+hljs.initHighlightingOnLoad();
 
 function rehighlight(){
     console.log("rehighlighting");

@@ -2,8 +2,7 @@
 {% block head %}
   {% load staticfiles %}
   <!--<script type="text/javascript"> window.CSRF_TOKEN = "{% csrf_token %}"; </script>-->
-  <script src="{% static 'js/ace/ace.js' %}"></script>
-  <script src="{% static 'timeline/new.js' %}"></script>
+  <script src="{% static 'timeline/new_compiled.js' %}"></script>
 {% endblock %}
 {% block lefttitle %}
   {% include 'timeline/includes/lefttitle.html' %}
