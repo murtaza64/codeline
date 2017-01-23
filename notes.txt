@@ -1,7 +1,7 @@
 TODO:
-    register
     private posts
-    ajax timeline infinite scroll
     live filtering
+    proper text formatting on /live
+    rework urls
     add tag of language automatically
     tag parsing /new ???
