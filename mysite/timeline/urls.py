@@ -5,15 +5,16 @@ import timeline.views as views
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    url(r'^$', views.GlobalTimelineView.as_view(), name='timeline'),
-    url(r'^live/?$', views.live_view, name='live'),
+    url(r'^$', views.live_view, name='live'),
+    url(r'^filter/?$', views.FilterTimelineView.as_view(), name='filter'),
+    url(r'^global/?$', views.GlobalTimelineView.as_view(), name='timeline'),
     url(r'^list/?$', views.PostListView.as_view(), name='list'),
     url(r'^(?P<pk>\d+)/?$', views.SinglePostView.as_view(), name='post_view'),
     #url(r'^test/', views.test, name = 'test'),
     url(r'^new/?$', views.NewPostView.as_view(), name='new'),
     url(r'^user/(?P<usr>\w+)/?$', views.UserTimelineView.as_view(), name='user'),
     url(r'^user/(?P<usr>\w+)/(?P<title>[a-zA-Z0-9.\-()\[\]{}_]+)$', views.UserTitleTimelineView.as_view(), name='user'),
-    url(r'^tag/([a-zA-Z0-9.\-_+]+)$', views.TagTimelineView.as_view(), name='user'),
+    url(r'^tag/(?P<tagstr>[a-zA-Z0-9.\-_+]+)$', views.TagTimelineView.as_view(), name='user'),
     url(r'^login/?$', auth_views.login, 
     {
         'template_name': 'timeline/login.html',

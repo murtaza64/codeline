@@ -207,7 +207,6 @@ $(function(){
         } else {
           cell.type = 2;
         }
-        cell.lang = null
         if (cell.title != "" || cell.content != ""){
           post.cells.push(cell)
         }

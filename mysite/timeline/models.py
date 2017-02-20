@@ -5,7 +5,7 @@ class Post(models.Model):
     title = models.CharField(max_length=140)
     body = models.TextField()
     date = models.DateTimeField()
-    author = models.ForeignKey(User, default=1, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(User, default=1, on_delete=models.SET_NULL, null=True)
     tags = models.ManyToManyField('Tag')
     private = models.BooleanField(default=False)
     def __str__(self):

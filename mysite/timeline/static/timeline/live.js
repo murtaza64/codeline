@@ -1,5 +1,5 @@
 var next_page = 1;
-var base_url = '/';
+var base_url = '/filter/';
 var post_template;
 var $content;
 var _throttleTimer;

@@ -12,6 +12,8 @@ from django.shortcuts import redirect, render
 from django.template import RequestContext
 from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.base import TemplateResponseMixin
+from django.db.models.query import QuerySet
+from django.db.models import Count
 from markdown2 import markdown
 from timeline.models import Post, Tag
 
@@ -137,6 +139,7 @@ class UserTimelineView(PostListView):
         return context
 
 class UserTitleTimelineView(UserTimelineView):
+    
     def get_queryset(self):
         qs = super(UserTitleTimelineView, self).get_queryset()
         title = self.kwargs['title']
@@ -147,26 +150,78 @@ class TagTimelineView(PostListView):
     template_name = 'timeline/timeline.html'
 
     def get_queryset(self):
+        tagstr = self.kwargs['tagstr']
         tags = []
         queryset = []
         qs = super(TagTimelineView, self).get_queryset()
-        for t in [a for a in self.args[0].split('+') if a]:
+        for t in [a for a in tagstr.split('+') if a]:
             try:
                 tags.append(Tag.objects.get(name=t))
             except Tag.DoesNotExist:
                 pass
         qs = qs.filter(tags__in=tags)
-        print(qs)
+        #print(qs)
         return qs
 
     def get_context_data(self, **kwargs):
-        args = [a for a in self.args if a]
+        tagstr = self.kwargs['tagstr']
         print('TAG TIMELINE VIEW')
         context = super(TagTimelineView, self).get_context_data(**kwargs)
-        context['subtitle'] = '/tag/' + '+'.join(args)
-        context['title'] = '+'.join(args) + ' | codeli.ne'
+        context['subtitle'] = '/tag/' + tagstr
+        context['title'] = tagstr + ' | codeli.ne'
         return context
 
+class FilterTimelineView(PostListView):
+    template_name = 'timeline/timeline.html'
+
+    @staticmethod
+    def add_to_qs_with_score(posts, qs, score):
+        for post in posts:
+            if post not in qs:
+                qs.append([post, score])
+            else:
+                qs[qs.index(post)][1] += score
+
+    def get_queryset(self):
+        print(self.request.GET)
+        get = self.request.GET
+
+        if 'title' not in get and 'user' not in get and 'tags' not in get:
+            return Post.objects.all().order_by('-date')
+            
+        qs = [] #[(post, score)]
+
+        if 'title' in get:
+            title = get['title']
+            posts = Post.objects.filter(title__in=[title, title.replace('_', ' ')])
+            self.add_to_qs_with_score(posts, qs, 1000)
+            posts = Post.objects.filter(title__contains=title)
+            self.add_to_qs_with_score(posts, qs, 900)
+            posts = Post.objects.filter(title__contains=title.replace('_', ' '))
+            self.add_to_qs_with_score(posts, qs, 900)
+        # if 'tags' in get:
+        #     tagnames = [a for a in get['tags'].split() if a]
+        #     tags = []
+        #     for t in tagnames:
+        #         try:
+        #             tags.append(Tag.objects.get(name=t))
+        #         except Tag.DoesNotExist:
+        #             pass 
+        #     qs = qs.filter(tags__in=tags)
+        #     qs = qs.annotate(num_matching_tags=qs.values('tags'))
+        #     qs = qs.order_by('num_matching_tags')
+        # if 'users' in get:
+        #     users = []
+        #     usrstr = get['users']
+        #     for u in [a for a in usrstr.split() if a]:
+        #         try:
+        #             users.append(User.objects.get(username=u))
+        #         except User.DoesNotExist:
+        #             pass 
+            # qs = qs.filter(author__in=users)
+
+        qs = [item[0] for item in sorted(qs, key=lambda i: i[1])]
+        return list(qs)
 
 class NewPostView(TemplateView):
     template_name = 'timeline/new.html'
@@ -200,16 +255,11 @@ class NewPostView(TemplateView):
         newpost.save()
         if not newpost.title:
             newpost.title = 'untitled '+str(newpost.id)
-        tags = postdict['tagstring'].split()
+        tags = postdict['tagstring'].lower().strip().split()
         print(tags)
         for tag in tags:
-            try:
-                tag = ''.join([c for c in tag if c in 'abcdefghijklmnopqrstuvwxyz1234567890-_.'])
-                tag_obj = Tag.objects.get(name=tag)
-            except Tag.DoesNotExist:
-                tag_obj = Tag()
-                tag_obj.name = tag
-                tag_obj.save()
+            tag = ''.join([c for c in tag if c in 'abcdefghijklmnopqrstuvwxyz1234567890-_.'])
+            tag_obj = Tag.objects.get_or_create(name=tag, defaults={'lang': False})[0]
             newpost.tags.add(tag_obj)
             print(tag)
         print(postdict['cells'])
@@ -241,7 +291,7 @@ def register_view(request):
         'title': 'register | codeli.ne',
         'subtitle': '/register'
     })
-    
+
 def logout_view(request):
     logout(request)
     return redirect('/')
