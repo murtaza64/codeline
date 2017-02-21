@@ -175,12 +175,13 @@ class FilterTimelineView(PostListView):
     template_name = 'timeline/timeline.html'
 
     @staticmethod
-    def add_to_qs_with_score(posts, qs, score):
+    def update_score(posts, scoredict, score, qs):
         for post in posts:
-            if post not in qs:
-                qs.append([post, score])
+            if post.id not in scoredict:
+                scoredict[post.id] = score
+                qs.append(post)
             else:
-                qs[qs.index(post)][1] += score
+                scoredict[post.id] += score
 
     def get_queryset(self):
         print(self.request.GET)
@@ -188,40 +189,46 @@ class FilterTimelineView(PostListView):
 
         if 'title' not in get and 'user' not in get and 'tags' not in get:
             return Post.objects.all().order_by('-date')
-            
-        qs = [] #[(post, score)]
+
+        qs = []
+        scoredict = {}
 
         if 'title' in get:
             title = get['title']
             posts = Post.objects.filter(title__in=[title, title.replace('_', ' ')])
-            self.add_to_qs_with_score(posts, qs, 1000)
+            self.update_score(posts, scoredict, 1000, qs)
             posts = Post.objects.filter(title__contains=title)
-            self.add_to_qs_with_score(posts, qs, 900)
+            self.update_score(posts, scoredict, 900, qs)
             posts = Post.objects.filter(title__contains=title.replace('_', ' '))
-            self.add_to_qs_with_score(posts, qs, 900)
-        # if 'tags' in get:
-        #     tagnames = [a for a in get['tags'].split() if a]
-        #     tags = []
-        #     for t in tagnames:
-        #         try:
-        #             tags.append(Tag.objects.get(name=t))
-        #         except Tag.DoesNotExist:
-        #             pass 
-        #     qs = qs.filter(tags__in=tags)
-        #     qs = qs.annotate(num_matching_tags=qs.values('tags'))
-        #     qs = qs.order_by('num_matching_tags')
-        # if 'users' in get:
-        #     users = []
-        #     usrstr = get['users']
-        #     for u in [a for a in usrstr.split() if a]:
-        #         try:
-        #             users.append(User.objects.get(username=u))
-        #         except User.DoesNotExist:
-        #             pass 
-            # qs = qs.filter(author__in=users)
+            self.update_score(posts, scoredict, 900, qs)
 
-        qs = [item[0] for item in sorted(qs, key=lambda i: i[1])]
-        return list(qs)
+        if 'user' in get:
+            user = get['user']
+            posts = Post.objects.filter(user=user)
+            self.update_score(posts, scoredict, 500, qs)
+            posts = Post.objects.filter(user__contains=user)
+            self.update_score(posts, scoredict, 350, qs)
+
+        if 'tags' in get:
+            tagnames = [a for a in get['tags'].split() if a]
+            tags = []
+            for t in tagnames:
+                try:
+                    tags.append(Tag.objects.get(name=t))
+                except Tag.DoesNotExist:
+                    pass
+            posts = list(Post.objects.filter(tags__in=tags).order_by('-date'))
+            for post in posts:
+                matching_tags = len([t for t in post.tags.all() if t in tags])
+            for post in posts:
+                if post.id not in scoredict:
+                    qs.append(post)
+                    scoredict[post.id] = 20*matching_tags
+                else:
+                    scoredict[post.id] += 20*matching_tags
+
+        qs = [post for post in sorted(qs, key=lambda i: scoredict[i.id], reverse=True)]
+        return qs
 
 class NewPostView(TemplateView):
     template_name = 'timeline/new.html'
