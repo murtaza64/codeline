@@ -186,30 +186,29 @@ class FilterTimelineView(PostListView):
     def get_queryset(self):
         print(self.request.GET)
         get = self.request.GET
-
-        if 'title' not in get and 'user' not in get and 'tags' not in get:
+        if not (get.get('title', False) or get.get('user', False) or get.get('tags', False)):
             return Post.objects.all().order_by('-date')
-
+        
         qs = []
         scoredict = {}
-
-        if 'title' in get:
+        posts_minusdate = Post.objects.order_by('-date')
+        if 'title' in get and get['title']:
             title = get['title']
-            posts = Post.objects.filter(title__in=[title, title.replace('_', ' ')])
+            posts = posts_minusdate.filter(title__in=[title, title.replace('_', ' ')])
             self.update_score(posts, scoredict, 1000, qs)
-            posts = Post.objects.filter(title__contains=title)
+            posts = posts_minusdate.filter(title__contains=title)
             self.update_score(posts, scoredict, 900, qs)
-            posts = Post.objects.filter(title__contains=title.replace('_', ' '))
+            posts = posts_minusdate.filter(title__contains=title.replace('_', ' '))
             self.update_score(posts, scoredict, 900, qs)
 
-        if 'user' in get:
+        if 'user' in get and get['user']:
             user = get['user']
-            posts = Post.objects.filter(user=user)
+            posts = posts_minusdate.filter(author__username=user)
             self.update_score(posts, scoredict, 500, qs)
-            posts = Post.objects.filter(user__contains=user)
+            posts = posts_minusdate.filter(author__username__contains=user)
             self.update_score(posts, scoredict, 350, qs)
 
-        if 'tags' in get:
+        if 'tags' in get and get['tags']:
             tagnames = [a for a in get['tags'].split() if a]
             tags = []
             for t in tagnames:
@@ -217,7 +216,7 @@ class FilterTimelineView(PostListView):
                     tags.append(Tag.objects.get(name=t))
                 except Tag.DoesNotExist:
                     pass
-            posts = list(Post.objects.filter(tags__in=tags).order_by('-date'))
+            posts = list(posts_minusdate.filter(tags__in=tags))
             for post in posts:
                 matching_tags = len([t for t in post.tags.all() if t in tags])
             for post in posts:
@@ -228,6 +227,7 @@ class FilterTimelineView(PostListView):
                     scoredict[post.id] += 20*matching_tags
 
         qs = [post for post in sorted(qs, key=lambda i: scoredict[i.id], reverse=True)]
+        print(qs, scoredict)
         return qs
 
 class NewPostView(TemplateView):
@@ -289,6 +289,7 @@ def register_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST) #TODO custom user form
         if form.is_valid():
+            form.save()
             return redirect('/login')
     if request.method == 'GET':
         form = UserCreationForm() #TODO attrs={'class': 'loginfield'}

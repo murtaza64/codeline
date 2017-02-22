@@ -20,6 +20,14 @@
   {% include 'timeline/includes/sidebarlinks.html' %}
 {% endblock %}
 
+{% block sidebar %}
+  <div style="font-variant: small-caps; margin-bottom: 5px">filter</div>
+  <input class="searchfield" type="text" placeholder="title">
+  <input class="searchfield" type="text" placeholder="author">
+  <input class="searchfield" type="text" placeholder="tags">
+  <div class="newbutton" id="filter_go" style="margin-top:10px; width: 100%">go</div>
+{% endblock %}
+
 {% block content %}
   <div id="posts">
   </div>
