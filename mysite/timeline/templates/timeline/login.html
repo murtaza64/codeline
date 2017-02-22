@@ -7,20 +7,6 @@
       $("#username").change(function(){
         $("#next").val("/user/"+$("#username").val());
       });
-      setup_placeholder("#username", "username");
-      $("#password").focus(function(){
-        if (this.value == "password"){
-          this.value = "";
-          this.type = "password";
-        }
-        $(this).css('color', 'inherit');
-      }).focusout(function(){
-        if (this.value == ""){
-          $(this).css('color', '#909090');
-          this.value = "password";
-          this.type = "text";
-        }
-      }).val("password").css("color", "#909090");
     })
   </script>
 {% endblock %}
@@ -34,10 +20,16 @@
 {% block content %}
 <form method="POST">
   {% csrf_token %}
-  <input class="loginfield" id="username" name="username" type="text">
-  <input class="loginfield" id="password" name="password" type="text">
+  <input class="loginfield" id="username" placeholder="username" name="username" type="text"
+  style="{% if form.non_field_errors %}border-color: #c06060;{% endif %}">
+  <input class="loginfield" id="password" placeholder="password" name="password" type="password"
+  style="{% if form.non_field_errors %}border-color: #c06060;{% endif %}">
   <br><br>
+  {% for error in form.non_field_errors %}
+    <p style='color:#c06060;'>{{error}}</p>
+  {% endfor %}
   <input type="submit" value="Login">
   <input type="hidden" id="next" name="next" value="/">
+
 </form>
 {% endblock %}

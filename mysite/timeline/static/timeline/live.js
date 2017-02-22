@@ -59,6 +59,19 @@ var newWorker = function (funcObj) {
     return worker;
 }
 
+function filter(){
+    base_url = '/filter/';
+    fields = $(".searchfield");
+    base_url += '?title='+fields[0].value.replace(' ', '_');
+    base_url += '&user='+fields[1].value.replace(/[^a-zA-Z0-9-_+@\.]/, '');
+    base_url += '&tags='+fields[2].value.replace(/[^a-zA-Z0-9-_\. ,]/, '').replace(/[ ,]/, '+');
+    console.log(base_url);
+    loading_page_start();
+    $('#posts').html('');
+    next_page = 1
+    extend_page()
+}
+
 function extend_page(){
     loading_page_start();
     $.ajax({
@@ -116,6 +129,14 @@ $(function(){
     $content = $("#content_col");
     $content_row = $("#content_row");
     $content.off("scroll", ScrollHandler).on("scroll", ScrollHandler);
+    $(".searchfield").keyup(function(e) {
+        if(e.keyCode == 13){
+            $("#filter_go").click();
+            console.log('enter')
+        }
+        console.log(e)
+    });
+    $("#filter_go").click(filter);
     Handlebars.registerHelper('easydate', function(options){
         return options.fn(this).substring(0,10); 
     }) //this might be the HACKiest thing I've ever written

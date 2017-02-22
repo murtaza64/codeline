@@ -1,13 +1,23 @@
+
+
+TEXTAREA_HTML = '<textarea rows=2 class="newfield cellinputcontent"></textarea>';
+
+// CELL_NAME = "cell name";
+// CELL_CONTENT = "cell content";
+// TAGS = "tag1 tag2 ...";
+// POST_TITLE = "post title";
+// LANG = "language";
+
 CELLINPUT_HTML = '\
 <div class="container-fluid cellfield" >\
   <div class="cellinputmeta">\
     <table><tr>\
       <td><div class="newbutton cellinputtype">{}</div></td>\
       <td style="width: 100%; padding-left:5px">\
-        <input type=text class="newfield cellinputname">\
+        <input type=text class="newfield cellinputname" placeholder="cell name">\
       </td>\
       <td>\
-        <input type=text class="newfield cellinputlang">\
+        <input type=text class="newfield cellinputlang" placeholder="language">\
       </td>\
       <td>\
         <div class="newbutton removecell">-</div>\
@@ -17,14 +27,6 @@ CELLINPUT_HTML = '\
   <div class="cic_container">\
     <div class="ace" id="ace_editor0"></div>\
   </div>';
-
-TEXTAREA_HTML = '<textarea rows=2 class="newfield cellinputcontent"></textarea>';
-
-CELL_NAME = "cell name";
-CELL_CONTENT = "cell content";
-TAGS = "tag1 tag2 ...";
-POST_TITLE = "post title";
-LANG = "language";
 
 function modeify(mode_str){
   if (mode_str == "c" || mode == "c++" || mode == "cpp"){
@@ -106,7 +108,7 @@ function setup_inputs(i){
       this.style.fontSize = 'inherit';
       this.style.paddingTop = 7;
       this.style.fontFamily = "Consolas,monospace";
-      $($('.cellinputlang')[i]).val("language").attr("disabled", false).css('color', '#909090');
+      $($('.cellinputlang')[i]).val("").attr("disabled", false);
 
     } else {
       this.style.paddingTop = 6;
@@ -127,7 +129,7 @@ function setup_inputs(i){
       this.style.borderColor = "#c06060";
       console.log('cellinputlang change');
       var editor = ace.edit("ace_editor" + i.toString());
-      if (this.value == LANG || this.value == ""){
+      if (this.value == ""){
         this.style.borderColor = "#d8d8d8";
         return;
       }
@@ -153,8 +155,8 @@ function setup_inputs(i){
     })
   });
 
-  setup_placeholder($('.cellinputname')[i], CELL_NAME);
-  setup_placeholder($('.cellinputlang')[i], LANG);
+  // setup_placeholder($('.cellinputname')[i], CELL_NAME);
+  // setup_placeholder($('.cellinputlang')[i], LANG);
   $('.cellinputtype')[i].style.fontFamily = "Consolas,monospace";
   $(".cellinputlang")[i].last_correct_mode = "text";
 
@@ -163,10 +165,10 @@ function setup_inputs(i){
 
 $(function(){
   console.log('ready');
-  $('.newfield').css('color', '#909090');
+  //$('.newfield').css('color', '#909090');
   setup_inputs(0);
-  setup_placeholder("#titlefield", POST_TITLE);
-  setup_placeholder("#tagfield", TAGS);
+  // setup_placeholder("#titlefield", POST_TITLE);
+  // setup_placeholder("#tagfield", TAGS);
 
   $('#addcell').click(function (){
     $("#cellinputs").append(CELLINPUT_HTML);
@@ -179,9 +181,9 @@ $(function(){
     statusupdate("submitting");
     post = {};
     post.title = $('#titlefield')[0].value;
-    if (post.title == POST_TITLE) post.title = "";
+    //if (post.title == POST_TITLE) post.title = "";
     post.tagstring = $('#tagfield')[0].value;
-    if (post.tagstring == TAGS) post.tagstring = "untagged";
+    if (post.tagstring == "") post.tagstring = "untagged";
     post.anonymous = $("#anonymousbox").is('.checked');
     post.cells = [];
     var cellfields = $('.cellfield');
@@ -193,12 +195,12 @@ $(function(){
       if (cellfields[i].using_cell){
         cell = {}
         cell.title = cellinputnames[i].value;
-        if (cell.title == CELL_NAME) cell.title = "";
+        // if (cell.title == CELL_NAME) cell.title = "";
         var editor = ace.edit("ace_editor" + i.toString());
         cell.content = editor.getValue();
-        if (cell.content == CELL_CONTENT) cell.content = "";
+        // if (cell.content == CELL_CONTENT) cell.content = "";
         cell.lang = cellinputlangs[i].value;
-        if (cell.lang == LANG) cell.lang = "";
+        // if (cell.lang == LANG) cell.lang = "";
         type_btn = cellinputtypes[i]
         if (type_btn.innerHTML == 'Aa'){
           cell.type = 0;
