@@ -12,6 +12,11 @@
   <a class="taglink{% if tag.lang %} lang{% endif %}" href="/tag/{{tag}}">#{{tag}}</a>
   {% endfor %}
 </p>
+{% if post.author_logged_in %}
+<p>
+  <a href='/delete/{{post.id}}'>delete</a>
+</p>
+{% endif %}
 
 <div class="container-fluid post">
   {% for i, cell in post.body %}

@@ -18,7 +18,7 @@ from markdown2 import markdown
 from timeline.models import Post, Tag
 
 
-def assemble_post(post):
+def assemble_post(post, request):
     '''
     Takes a Post object and converts it into a format friendly
     to the template (unpacks post.body into an enumerated iterable
@@ -42,7 +42,8 @@ def assemble_post(post):
 
     tags = post.tags.all().order_by('-lang', 'name')
     send_post = {'id': post.id, 'title': post.title, 'author': post.author,
-        'date': post.date, 'private': post.private, 'tags': tags, 'body': enumerate(cells)}
+        'date': post.date, 'private': post.private, 'author_logged_in': request.user == post.author,
+        'tags': tags, 'body': enumerate(cells)}
     return send_post
 
 class JSONPostViewMixin(TemplateResponseMixin):
@@ -65,6 +66,8 @@ class JSONPostViewMixin(TemplateResponseMixin):
             d['pk'] = p.pk
             d['model'] = 'timeline.post'
             fields = {}
+            fields['author_logged_in'] = self.request.user == p.author
+            fields['id'] = p.id
             fields['title'] = p.title
             if p.author is not None:
                 fields['author'] = p.author.username
@@ -91,7 +94,7 @@ class PostListView(JSONPostViewMixin, ListView):
     
     def get_context_data(self, **kwargs):
         context = super(PostListView, self).get_context_data(**kwargs)
-        context['posts'] = [assemble_post(post) for post in context['object_list']]
+        context['posts'] = [assemble_post(post, self.request) for post in context['object_list']]
         #context['posts'] = [p for p in context['posts'] if 
             #not(p['private']) or p['author'] is self.request.user]
         return context

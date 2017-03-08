@@ -13,6 +13,11 @@
   <a class="taglink{{#if tag.lang}} lang{{/if}}" href="/tag/{{tag.name}}">#{{tag.name}}</a>
   {{/each}}
 </p>
+{{#if author_logged_in}}
+<p>
+  <a href='/delete/{{id}}'>delete</a>
+</p>
+{{/if}}
 
 <div class="container-fluid post">
   {{#each body.cells as |cell i|}}
