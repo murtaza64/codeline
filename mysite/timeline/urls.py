@@ -12,9 +12,9 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/?$', views.SinglePostView.as_view(), name='post_view'),
     #url(r'^test/', views.test, name = 'test'),
     url(r'^new/?$', views.NewPostView.as_view(), name='new'),
-    url(r'^user/(?P<usr>\w+)/?$', views.UserTimelineView.as_view(), name='user'),
-    url(r'^user/(?P<usr>\w+)/(?P<title>[a-zA-Z0-9.\-()\[\]{}_]+)$', views.UserTitleTimelineView.as_view(), name='user'),
-    url(r'^tag/(?P<tagstr>[a-zA-Z0-9.\-_+]+)$', views.TagTimelineView.as_view(), name='user'),
+    url(r'^user/(?P<usr>[a-zA-Z0-9.\-_]+)/?$', views.UserTimelineView.as_view(), name='user'),
+    url(r'^user/(?P<usr>[a-zA-Z0-9.\-_]+)/(?P<title>[a-zA-Z0-9.\-()\[\]{}_]+)$', views.UserTitleTimelineView.as_view(), name='user_title'),
+    url(r'^tag/(?P<tagstr>[a-zA-Z0-9.\-_+]+)$', views.TagTimelineView.as_view(), name='tag'),
     url(r'^login/?$', auth_views.login, 
     {
         'template_name': 'timeline/login.html',
@@ -24,5 +24,6 @@ urlpatterns = [
         }
     }, name='login'),
     url(r'^register/$', views.register_view, name='register'),
-    url(r'^logout/$', views.logout_view, name='logout')
+    url(r'^logout/$', views.logout_view, name='logout'),
+    url(r'^delete/(?P<pk>\d+)/?$', views.delete_view, name='delete')
 ]

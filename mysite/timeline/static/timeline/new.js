@@ -184,7 +184,7 @@ $(function(){
     //if (post.title == POST_TITLE) post.title = "";
     post.tagstring = $('#tagfield')[0].value;
     if (post.tagstring == "") post.tagstring = "untagged";
-    post.anonymous = $("#anonymousbox").is('.checked');
+    post.anonymous = $("#anonymousbox").is(':checked');
     post.cells = [];
     var cellfields = $('.cellfield');
     var cellinputnames = $('.cellinputname');

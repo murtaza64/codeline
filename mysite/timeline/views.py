@@ -6,9 +6,10 @@ from django.contrib.auth import logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core import serializers
+from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.template import RequestContext
 from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.base import TemplateResponseMixin
@@ -117,7 +118,7 @@ class SinglePostView(JSONPostViewMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(SinglePostView, self).get_context_data(**kwargs)
-        context['post'] = assemble_post(context['object'])
+        context['post'] = assemble_post(context['object'], self.request)
         #HACK: makes SinglePostView work nicely with JSONPostViewMixin
         context['object_list'] = [context['object']]
         context['subtitle'] = '/' + str(context['post']['id'])
@@ -306,5 +307,18 @@ def register_view(request):
 def logout_view(request):
     logout(request)
     return redirect('/')
+
+def delete_view(request, pk=None):
+    if pk is None or not request.user.is_authenticated:
+        return redirect('/')
+    post = get_object_or_404(Post, pk=pk)
+    if request.user == post.author:
+        post.delete()
+        return redirect(reverse('timeline:user', kwargs={'usr': request.user.username}))
+    else:
+        return redirect('/')
+
+
+    print(pk)
 
 #TODO:40 tags, ajax/live page updates
