@@ -82,7 +82,7 @@ function setup_ace(i){
   editor.setTheme("ace/theme/chrome");
   editor.setOptions({
     minLines: 5,
-    maxLines: 50
+    maxLines: 5000
   });
   editor.getSession().setUseSoftTabs(true);
   editor.getSession().setUseWrapMode(true);
@@ -119,6 +119,25 @@ function setup_inputs(i){
     }
     $($('.cellinputlang')[i]).change();
   });
+  inputtype = $('.cellinputtype')[i]
+
+  if(inputtype.innerHTML == 'MD'){
+    inputtype.style.fontSize = '11px';
+    inputtype.style.paddingTop = 8;
+    $($('.cellinputlang')[i]).val("markdown").attr("disabled", true);
+  }
+  if(inputtype.innerHTML == '{}'){
+    inputtype.style.fontSize = 'inherit';
+    inputtype.style.paddingTop = 7;
+    inputtype.style.fontFamily = "Consolas,monospace";
+    $($('.cellinputlang')[i]).val("").attr("disabled", false);
+  }
+  if(inputtype.innerHTML == 'Aa'){
+    this.style.paddingTop = 6;
+    $($('.cellinputlang')[i]).val("text").css("color", "inherit").attr("disabled", true);
+    //$('.cellinputcontent')[i].style.fontFamily = "inherit";
+    this.style.fontFamily = "inherit";
+  }
 
   $($('.cellinputlang')[i]).change(function(){
     mode = this.value.toLowerCase()
@@ -166,13 +185,16 @@ function setup_inputs(i){
 $(function(){
   console.log('ready');
   //$('.newfield').css('color', '#909090');
-  setup_inputs(0);
+  var cellfield_n = $('.cellfield').length;
+  for(var k = 0; k < cellfield_n; k++){
+    setup_inputs(k);
+  }
   // setup_placeholder("#titlefield", POST_TITLE);
   // setup_placeholder("#tagfield", TAGS);
 
   $('#addcell').click(function (){
     $("#cellinputs").append(CELLINPUT_HTML);
-    var i = $('.cellfield').length-1;
+    i = $('.cellfield').length-1;
     setup_inputs(i);
   });
 
@@ -229,12 +251,15 @@ $(function(){
         console.log("ajax success");
         console.log(data);
         if (!data.success){
-          if (data.error == "empty post"){
-            statuserror("error: empty post");
+          if (data.message != ""){
+            statuserror(data.message);
+          }
+          else {
+            statuserror("unknown server side error")
           }
         }
         else{
-          statusupdate("post created");
+          statusupdate(data.message);
           statusupdate("<a href='"+data.link+"'>"+data.link+"</a>");
         }
       },

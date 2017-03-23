@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/?$', views.SinglePostView.as_view(), name='post_view'),
     #url(r'^test/', views.test, name = 'test'),
     url(r'^new/?$', views.NewPostView.as_view(), name='new'),
+    url(r'^edit/(?P<pk>\d+)/?$', views.EditPostView.as_view(), name='edit_view'),
     url(r'^user/(?P<usr>[a-zA-Z0-9.\-_]+)/?$', views.UserTimelineView.as_view(), name='user'),
     url(r'^user/(?P<usr>[a-zA-Z0-9.\-_]+)/(?P<title>[a-zA-Z0-9.\-()\[\]{}_]+)$', views.UserTitleTimelineView.as_view(), name='user_title'),
     url(r'^tag/(?P<tagstr>[a-zA-Z0-9.\-_+]+)$', views.TagTimelineView.as_view(), name='tag'),

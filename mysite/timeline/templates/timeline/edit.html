@@ -1,0 +1,67 @@
+{% extends "timeline/header.html" %}
+{% block head %}
+  {% load staticfiles %}
+  <!--<script type="text/javascript"> window.CSRF_TOKEN = "{% csrf_token %}"; </script>-->
+  <script src="{% static 'js/ace/ace.js' %}"></script>
+  <script src="{% static 'timeline/new.js' %}"></script>
+{% endblock %}
+{% block lefttitle %}
+  {% include 'timeline/includes/lefttitle.html' %}
+{% endblock %}
+{% block login %}
+  {% include 'timeline/includes/login.html' %}
+{% endblock %}
+{% block sidebarlinks %}
+  {% include 'timeline/includes/sidebarlinks.html' %}
+{% endblock %}
+{% block content %}
+  {% csrf_token %}
+  <input type="text" class="newfield title" id="titlefield" placeholder="post title" value="{{post.title}}">
+  <input type="text" class="newfield tags" id="tagfield" placeholder="tag1 tag2 ..." 
+  value="{% for tag in post.tags %}{{tag}} {% endfor %}">
+  <br><br>
+  <div class="container-fluid cellfield_container">
+    <div id="cellinputs">
+      {% for i, cell in post.body %}
+      <div class="container-fluid cellfield" >
+        <div class="cellinputmeta">
+          <table><tr>
+            <td><div class="newbutton cellinputtype">
+              {% if cell.type == 2 %}{}{% endif %}
+              {% if cell.type == 0 %}Aa{% endif %}
+              {% if cell.type == 1 %}MD{% endif %}
+            </div></td>
+            <td style="width: 100%; padding-left:5px">
+              <input type=text class="newfield cellinputname" placeholder="cell name" value="{{cell.name}}">
+            </td>
+            <td>
+              <input type=text class="newfield cellinputlang" placeholder="language" 
+              value="{%if cell.lang %}{{cell.lang}}{% endif %}">
+            </td>
+            <td>
+              <div class="newbutton removecell">-</div>
+            </td>
+          </tr></table>
+        </div>
+        <div class="cic_container">
+          <div class="ace" id="ace_editor{{i}}">{{cell.content}}</div>
+        </div>
+      </div>
+      {% endfor %}
+      <!--<div style="margin-top:-10px;"></div>-->
+    </div>
+    <div class="newbutton" id="addcell">+</div>
+  </div>
+  <br>
+  {% if user.is_authenticated %}
+    <input id="anonymousbox" type="checkbox">
+  {% else %}
+    <input id="anonymousbox" type="checkbox" disabled checked>
+  {% endif %}
+  &nbsp post anonymously
+  <br><br>
+  <div class="newbutton" id="submit">submit</div>
+  <br>
+  <div id="status" style="margin-top:10px;"> </div>
+  <br><br><br>
+{% endblock %}

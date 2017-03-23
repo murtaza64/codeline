@@ -12,7 +12,8 @@ from django.middleware.csrf import get_token
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template import RequestContext
 from django.views.generic import DetailView, ListView, TemplateView
-from django.views.generic.base import TemplateResponseMixin
+from django.views.generic.base import TemplateResponseMixin 
+from django.views.generic.detail import SingleObjectMixin
 from django.db.models.query import QuerySet
 from django.db.models import Count
 from markdown2 import markdown
@@ -246,42 +247,99 @@ class NewPostView(TemplateView):
         print(c)
         return context
 
-    def post(self, request, *args, **kwargs):
-        newpost = Post()
+    def update_post(self, request, post):
         postdict = json.loads(str(request.body, 'utf-8'))
         try:
             print('USER', request.user, request.user.is_authenticated)
             print(postdict)
-            if request.user.is_authenticated and not postdict['anonymous']:
-                print('user is authenticated')
-                newpost.author = request.user
-            else:
-                newpost.author = None
-            newpost.title = postdict['title']
-            newpost.date = datetime.datetime.now()
+            if not post.author:
+                if request.user.is_authenticated and not postdict['anonymous']:
+                    print('user is authenticated')
+                    post.author = request.user
+                else:
+                    post.author = None
+            post.title = postdict['title']
+            post.last_updated = datetime.datetime.now()
+            if not post.date:
+                post.date = post.last_updated
         except Exception as e:
             print('SOME VALIDATION ERROR')
             print(e)
-            return JsonResponse(dict(success=False))
-        newpost.save()
-        if not newpost.title:
-            newpost.title = 'untitled '+str(newpost.id)
+            return (False, 'unknown', post.id)
+        post.save()
+        if not post.title:
+            post.title = 'untitled '+str(post.id)
         tags = postdict['tagstring'].lower().strip().split()
         print(tags)
         for tag in tags:
             tag = ''.join([c for c in tag if c in 'abcdefghijklmnopqrstuvwxyz1234567890-_.'])
             tag_obj = Tag.objects.get_or_create(name=tag, defaults={'lang': False})[0]
-            newpost.tags.add(tag_obj)
+            post.tags.add(tag_obj)
             print(tag)
         print(postdict['cells'])
         if (not postdict['cells']):
-            newpost.delete()
-            return JsonResponse(dict(success=False, error='empty post'))
+            return (False, 'empty post', post.id)
         body = dict(cells=postdict['cells'])
-        newpost.body = json.dumps(body)
-        print(newpost)
-        newpost.save()
-        return JsonResponse(dict(success=True, link='http://'+request.get_host()+'/'+str(newpost.id)))
+        post.body = json.dumps(body)
+        print(post)
+        post.save()
+        return (True, '', post.id)
+
+    def post(self, request, *args, **kwargs):
+        newpost = Post()
+        print(request.body)
+        status = self.update_post(request, newpost)
+        if status[0]:
+            return JsonResponse(dict(success=True, link='http://'+request.get_host()+'/'+str(status[2])))
+        else:
+            return JsonResponse(dict(success=False, error=status[1]))
+
+class EditPostView(NewPostView, SingleObjectMixin):
+    template_name = 'timeline/edit.html'
+    model = Post
+
+    def get_context_data(self, **kwargs):
+        context = super(NewPostView, self).get_context_data(**kwargs)
+        post = self.object
+        if post.body:
+            body_dict = json.loads(post.body)
+            try:
+                cells = [c for c in body_dict['cells']]
+            except KeyError:
+                cells = []
+        else:
+            cells = []
+        tags = post.tags.all().order_by('-lang', 'name')
+        send_post = {'id': post.id, 'title': post.title, 'author': post.author,
+        'date': post.date, 'private': post.private, 'author_logged_in': self.request.user == post.author,
+        'tags': tags, 'body': enumerate(cells)}
+
+        context['post'] = send_post
+        context['subtitle'] = '/edit/'+str(context['post']['id'])
+        context['title'] = 'edit post | codeli.ne'   
+        return context 
+    
+    def get(self, request, *args, **kwargs):
+        print('hello world')
+        self.object = self.get_object()
+        if request.user.is_authenticated and self.object.author == request.user:
+            response = super().get(self, request, *args, **kwargs)
+            return response
+        else:
+            return redirect('/'+str(self.object.id))
+
+    def post(self, request, *args, **kwargs):
+        print(kwargs['pk'])
+        self.object = self.get_object()
+        status = self.update_post(request, self.object)
+        if status[0]:
+            return JsonResponse(dict(
+                success=True, 
+                message='post updated', 
+                link='http://'+request.get_host()+'/'+str(status[2]))
+            )
+        else:
+            return JsonResponse(dict(success=False, message=status[1]))
 
 def live_view(request):
     return render(request, 'timeline/live.html', {
