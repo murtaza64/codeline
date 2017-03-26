@@ -153,6 +153,16 @@ td{
   color: #888888;
   text-decoration: none;
 }
+
+.newlink {
+  color: #333333;
+  font-size: 16px;
+}
+.newlink:hover {
+  color: #888888;
+  text-decoration: none;
+}
+
 .loginfield{
   padding: 10px;
   margin-top: 5px;

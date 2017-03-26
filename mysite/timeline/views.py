@@ -44,7 +44,8 @@ def assemble_post(post, request):
 
     tags = post.tags.all().order_by('-lang', 'name')
     send_post = {'id': post.id, 'title': post.title, 'author': post.author,
-        'date': post.date, 'private': post.private, 'author_logged_in': request.user == post.author,
+        'date': post.date, 'last_updated': post.last_updated, 'edited': post.edited, 
+        'private': post.private, 'author_logged_in': request.user == post.author,
         'tags': tags, 'body': enumerate(cells)}
     return send_post
 
@@ -77,6 +78,8 @@ class JSONPostViewMixin(TemplateResponseMixin):
                 fields['author'] = None
             fields['tags'] = [{'name': t.name, 'lang': t.lang} for t in p.tags.all()]
             fields['date'] = p.date
+            fields['edited'] = p.edited
+            fields['last_updated'] = p.last_updated
             if p.body and p.body != '{}':
                 fields['body'] = json.loads(p.body)
                 for cell in fields['body']['cells']:
@@ -311,7 +314,8 @@ class EditPostView(NewPostView, SingleObjectMixin):
             cells = []
         tags = post.tags.all().order_by('-lang', 'name')
         send_post = {'id': post.id, 'title': post.title, 'author': post.author,
-        'date': post.date, 'private': post.private, 'author_logged_in': self.request.user == post.author,
+        'date': post.date, 'last_updated': post.last_updated, 'edited': post.edited, 
+        'private': post.private, 'author_logged_in': self.request.user == post.author,
         'tags': tags, 'body': enumerate(cells)}
 
         context['post'] = send_post
@@ -332,6 +336,9 @@ class EditPostView(NewPostView, SingleObjectMixin):
         print(kwargs['pk'])
         self.object = self.get_object()
         status = self.update_post(request, self.object)
+        self.object.edited = True
+        print(self.object.edited)
+        self.object.save()
         if status[0]:
             return JsonResponse(dict(
                 success=True, 

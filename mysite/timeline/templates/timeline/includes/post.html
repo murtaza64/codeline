@@ -6,6 +6,9 @@
   <a class="datelink" href="/user/{{post.author}}/">{{post.author}}</a> - 
   {% endif %}
   {{post.date|date:'Y-m-d'}}
+  {% if post.edited %}
+   - edited {{post.date|date:'Y-m-d'}}
+  {% endif %}
 </p>
 <p class="posttags">
   {% for tag in post.tags %}
@@ -14,6 +17,8 @@
 </p>
 {% if post.author_logged_in %}
 <p>
+  <a href='/edit/{{post.id}}'>edit</a>
+  -
   <a href='/delete/{{post.id}}'>delete</a>
 </p>
 {% endif %}
@@ -27,14 +32,14 @@
       {% endif %} -->
 
       {% if cell.type == 2 %}
-          <pre class="codecell"><div class="cellindex code">{{i}}{% if cell.title %} - {{cell.title}}{% endif %}</div><code class = "{{cell.lang}}">{{ cell.content }}</code></pre>
+          <pre class="codecell"><div class="cellindex code">{{i}}{% if cell.title %} - {{cell.title}}{% endif %}</div><code class = "{{cell.lang}}">{{cell.content}}</code></pre>
       {% else %}
         <div class="container-fluid cell text">
           <div class="cellindex">
               {{i}}{% if cell.title %} - {{cell.title}}{% endif %}
           </div>
           <p>
-              {{ cell.content|safe }}
+              {{cell.content|safe}}
           </p> <!--TODO:30 make sure input is safe-->
         </div>
       {% endif %}
