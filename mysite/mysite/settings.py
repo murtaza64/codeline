@@ -26,8 +26,8 @@ SECRET_KEY = 'eh5mt#h+s6dn$azchia=ara9ydg5l5n=0gk5h2o=itm77j9#a1'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '.ngrok.io',
-    'localhost'
+    'localhost',
+    '146.185.141.43'
 ]
 
 
@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': '/var/www/codeline/mysite/db.sqlite3',
     }
 }
 
@@ -122,4 +122,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/Users/murtaza64/gd/d/codeline/mysite/static'
+STATIC_ROOT = '/var/www/codeline/mysite/static'
