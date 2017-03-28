@@ -144,7 +144,7 @@ class UserTimelineView(PostListView):
         return qs
 
     def get_context_data(self, **kwargs):
-        print('USER TIMELINE VIEW')
+        #print('USER TIMELINE VIEW')
         context = super(UserTimelineView, self).get_context_data(**kwargs)
         context['subtitle'] = '/user/' + self.kwargs['usr']
         context['title'] = '{}\'s codeli.ne'.format(self.kwargs['usr'])
@@ -177,7 +177,7 @@ class TagTimelineView(PostListView):
 
     def get_context_data(self, **kwargs):
         tagstr = self.kwargs['tagstr']
-        print('TAG TIMELINE VIEW')
+        #print('TAG TIMELINE VIEW')
         context = super(TagTimelineView, self).get_context_data(**kwargs)
         context['subtitle'] = '/tag/' + tagstr
         context['title'] = tagstr + ' | codeli.ne'
@@ -215,7 +215,7 @@ class FilterTimelineView(PostListView):
                 scoredict[post.id] += score
 
     def get_queryset(self):
-        print(self.request.GET)
+        #print(self.request.GET)
         get = self.request.GET
         if not (get.get('title', False) or get.get('user', False) or get.get('tags', False)):
             return Post.objects.all().order_by('-date')
@@ -258,7 +258,7 @@ class FilterTimelineView(PostListView):
                     scoredict[post.id] += 20*matching_tags
 
         qs = [post for post in sorted(qs, key=lambda i: scoredict[i.id], reverse=True)]
-        print(qs, scoredict)
+        #print(qs, scoredict)
         return qs
 
 class NewPostView(TemplateView):
@@ -268,19 +268,13 @@ class NewPostView(TemplateView):
         context = super(NewPostView, self).get_context_data(**kwargs)
         context['subtitle'] = '/new'
         context['title'] = 'new post | codeli.ne'
-        c = RequestContext(self.request)
-        print(context)
-        print(c)
         return context
 
     def update_post(self, request, post):
         postdict = json.loads(str(request.body, 'utf-8'))
         try:
-            print('USER', request.user, request.user.is_authenticated)
-            print(postdict)
             if not post.author:
                 if request.user.is_authenticated and not postdict['anonymous']:
-                    print('user is authenticated')
                     post.author = request.user
                 else:
                     post.author = None
@@ -296,8 +290,6 @@ class NewPostView(TemplateView):
         if not post.title:
             post.title = 'untitled '+str(post.id)
         tags = postdict['tagstring'].lower().strip().split()
-        print(tags)
-        print(postdict['cells'])
         if (not postdict['cells']):
             return (False, 'empty post', post.id)
         body = dict(cells=postdict['cells'])
@@ -318,7 +310,7 @@ class NewPostView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         newpost = Post()
-        print(request.body)
+        # print(request.body)
         status = self.update_post(request, newpost)
         if status[0]:
             return JsonResponse(dict(
@@ -386,21 +378,18 @@ class EditPostView(ForkPostView):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         if request.user.is_authenticated and self.object.author == request.user:
-            print('user auth')
             response = super().get(request, *args, **kwargs)
             return response
         else:
             return redirect('/'+str(self.object.id))
 
     def post(self, request, *args, **kwargs):
-        print(kwargs['pk'])
         self.object = self.get_object()
         if not request.user.is_authenticated or self.object.author != request.user:
             return JsonResponse(dict(success=False, message='User not authenticated'))
         else:
             status = self.update_post(request, self.object)
             self.object.edited = True
-            print(self.object.edited)
             self.object.save()
             if status[0]:
                 return JsonResponse(dict(
@@ -425,7 +414,7 @@ def register_view(request):
             return redirect('/login')
     if request.method == 'GET':
         form = UserCreationForm() #TODO attrs={'class': 'loginfield'}
-    print(form)
+    #print(form)
     return render(request, 'timeline/register.html', {
         'form': form, 
         'title': 'register | codeli.ne',
@@ -445,8 +434,5 @@ def delete_view(request, pk=None):
         return redirect(reverse('timeline:user', kwargs={'usr': request.user.username}))
     else:
         return redirect('/')
-
-
-    print(pk)
 
 #TODO:40 tags, ajax/live page updates
