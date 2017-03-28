@@ -7,4 +7,5 @@ venv/
 .open
 STATIC_FILES/
 ~$*
-mysite/settings.py
+mysite/mysite/settings.py
+mysite/static/*
