@@ -403,7 +403,7 @@ class EditPostView(ForkPostView):
 def live_view(request):
     return render(request, 'timeline/live.html', {
         'title': 'codeline',
-        'subtitle': '/live'
+        #'subtitle': '/live'
     })
 
 def register_view(request):
