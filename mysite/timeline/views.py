@@ -117,7 +117,7 @@ class GlobalTimelineView(PostListView):
 
     def get_context_data(self, **kwargs):
         context = super(GlobalTimelineView, self).get_context_data(**kwargs)
-        context['title'] = 'codeli.ne'
+        context['title'] = 'codeline'
         return context
 
 class SinglePostView(JSONPostViewMixin, DetailView):
@@ -130,7 +130,7 @@ class SinglePostView(JSONPostViewMixin, DetailView):
         #HACK: makes SinglePostView work nicely with JSONPostViewMixin
         context['object_list'] = [context['object']]
         context['subtitle'] = '/' + str(context['post']['id'])
-        context['title'] = '{} | codeli.ne'.format(context['post']['title'])
+        context['title'] = '{} | codeline'.format(context['post']['title'])
         return context
 
 
@@ -147,7 +147,7 @@ class UserTimelineView(PostListView):
         #print('USER TIMELINE VIEW')
         context = super(UserTimelineView, self).get_context_data(**kwargs)
         context['subtitle'] = '/user/' + self.kwargs['usr']
-        context['title'] = '{}\'s codeli.ne'.format(self.kwargs['usr'])
+        context['title'] = '{}\'s codeline'.format(self.kwargs['usr'])
         return context
 
 class UserTitleTimelineView(UserTimelineView):
@@ -180,7 +180,7 @@ class TagTimelineView(PostListView):
         #print('TAG TIMELINE VIEW')
         context = super(TagTimelineView, self).get_context_data(**kwargs)
         context['subtitle'] = '/tag/' + tagstr
-        context['title'] = tagstr + ' | codeli.ne'
+        context['title'] = tagstr + ' | codeline'
         return context
 
 class ForksView(PostListView):
@@ -189,7 +189,7 @@ class ForksView(PostListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['subtitle'] = '/' + str(self.parent.id) + '/forks'
-        context['title'] =  'forks of ' + self.parent.title + ' | codeli.ne'
+        context['title'] =  'forks of ' + self.parent.title + ' | codeline'
         context['parent'] = self.parent
         return context
 
@@ -267,7 +267,7 @@ class NewPostView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(NewPostView, self).get_context_data(**kwargs)
         context['subtitle'] = '/new'
-        context['title'] = 'new post | codeli.ne'
+        context['title'] = 'new post | codeline'
         return context
 
     def update_post(self, request, post):
@@ -344,7 +344,7 @@ class ForkPostView(NewPostView, SingleObjectMixin):
 
         context['post'] = send_post
         context['subtitle'] = '/fork/'+str(context['post']['id'])
-        context['title'] = 'fork post | codeli.ne'   
+        context['title'] = 'fork post | codeline'   
         return context 
 
     def get(self, request, *args, **kwargs):
@@ -372,7 +372,7 @@ class EditPostView(ForkPostView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['subtitle'] = '/edit/'+str(context['post']['id'])
-        context['title'] = 'edit post | codeli.ne'  
+        context['title'] = 'edit post | codeline'  
         return context
 
     def get(self, request, *args, **kwargs):
@@ -402,7 +402,7 @@ class EditPostView(ForkPostView):
 
 def live_view(request):
     return render(request, 'timeline/live.html', {
-        'title': 'codeli.ne',
+        'title': 'codeline',
         'subtitle': '/live'
     })
 
@@ -417,7 +417,7 @@ def register_view(request):
     #print(form)
     return render(request, 'timeline/register.html', {
         'form': form, 
-        'title': 'register | codeli.ne',
+        'title': 'register | codeline',
         'subtitle': '/register'
     })
 
