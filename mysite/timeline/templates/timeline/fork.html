@@ -53,8 +53,14 @@
     <div class="newbutton" id="addcell">+</div>
   </div>
   <br>
+  {% if user.is_authenticated %}
+    <input id="anonymousbox" type="checkbox">
+  {% else %}
+    <input id="anonymousbox" type="checkbox" disabled checked>
+  {% endif %}
+  &nbsp post anonymously
   <br><br>
-  <div class="newbutton" id="submit">save</div>
+  <div class="newbutton" id="submit">submit</div>
   <br>
   <div id="status" style="margin-top:10px;"> </div>
   <br><br><br>

@@ -46,7 +46,7 @@ def assemble_post(post, request):
     send_post = {'id': post.id, 'title': post.title, 'author': post.author,
         'date': post.date, 'last_updated': post.last_updated, 'edited': post.edited, 
         'private': post.private, 'author_logged_in': request.user == post.author,
-        'tags': tags, 'body': enumerate(cells)}
+        'parent': post.parent, 'tags': tags, 'body': enumerate(cells)}
     return send_post
 
 class JSONPostViewMixin(TemplateResponseMixin):
@@ -80,6 +80,10 @@ class JSONPostViewMixin(TemplateResponseMixin):
             fields['date'] = p.date
             fields['edited'] = p.edited
             fields['last_updated'] = p.last_updated
+            if p.parent:
+                fields['parent'] = dict(title=p.parent.title, id=p.parent.id)
+            else:
+                fields['parent'] = None
             if p.body and p.body != '{}':
                 fields['body'] = json.loads(p.body)
                 for cell in fields['body']['cells']:
@@ -178,6 +182,25 @@ class TagTimelineView(PostListView):
         context['subtitle'] = '/tag/' + tagstr
         context['title'] = tagstr + ' | codeli.ne'
         return context
+
+class ForksView(PostListView):
+    template_name = 'timeline/forks.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['subtitle'] = '/' + str(self.parent.id) + '/forks'
+        context['title'] =  'forks of ' + self.parent.title + ' | codeli.ne'
+        context['parent'] = self.parent
+        return context
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.filter(parent=self.parent)
+        return qs
+
+    def get(self, request, *args, **kwargs):
+        self.parent = get_object_or_404(Post, pk=kwargs['pk'])
+        return super().get(request, *args, **kwargs)
 
 class FilterTimelineView(PostListView):
     template_name = 'timeline/timeline.html'
@@ -293,12 +316,16 @@ class NewPostView(TemplateView):
         print(request.body)
         status = self.update_post(request, newpost)
         if status[0]:
-            return JsonResponse(dict(success=True, link='http://'+request.get_host()+'/'+str(status[2])))
+            return JsonResponse(dict(
+                success=True, 
+                message = 'post created', 
+                link='http://'+request.get_host()+'/'+str(status[2])
+            ))
         else:
             return JsonResponse(dict(success=False, error=status[1]))
 
-class EditPostView(NewPostView, SingleObjectMixin):
-    template_name = 'timeline/edit.html'
+class ForkPostView(NewPostView, SingleObjectMixin):
+    template_name = 'timeline/fork.html'
     model = Post
 
     def get_context_data(self, **kwargs):
@@ -316,18 +343,46 @@ class EditPostView(NewPostView, SingleObjectMixin):
         send_post = {'id': post.id, 'title': post.title, 'author': post.author,
         'date': post.date, 'last_updated': post.last_updated, 'edited': post.edited, 
         'private': post.private, 'author_logged_in': self.request.user == post.author,
-        'tags': tags, 'body': enumerate(cells)}
+        'parent': post.parent, 'tags': tags, 'body': enumerate(cells)}
 
         context['post'] = send_post
-        context['subtitle'] = '/edit/'+str(context['post']['id'])
-        context['title'] = 'edit post | codeli.ne'   
+        context['subtitle'] = '/fork/'+str(context['post']['id'])
+        context['title'] = 'fork post | codeli.ne'   
         return context 
-    
+
     def get(self, request, *args, **kwargs):
-        print('hello world')
+        self.object = self.get_object()
+        response = super().get(request, *args, **kwargs)
+        return response
+
+    def post(self, request, *args, **kwargs):
+        newpost = Post()
+        status = self.update_post(request, newpost)
+        newpost.parent = self.get_object()
+        newpost.save()
+        if status[0]:
+            return JsonResponse(dict(
+                success=True, 
+                message='post forked', 
+                link='http://'+request.get_host()+'/'+str(status[2])
+            ))
+        else:
+            return JsonResponse(dict(success=False, message=status[1]))
+
+class EditPostView(ForkPostView):
+    template_name = 'timeline/edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['subtitle'] = '/edit/'+str(context['post']['id'])
+        context['title'] = 'edit post | codeli.ne'  
+        return context
+
+    def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         if request.user.is_authenticated and self.object.author == request.user:
-            response = super().get(self, request, *args, **kwargs)
+            print('user auth')
+            response = super().get(request, *args, **kwargs)
             return response
         else:
             return redirect('/'+str(self.object.id))
@@ -335,18 +390,21 @@ class EditPostView(NewPostView, SingleObjectMixin):
     def post(self, request, *args, **kwargs):
         print(kwargs['pk'])
         self.object = self.get_object()
-        status = self.update_post(request, self.object)
-        self.object.edited = True
-        print(self.object.edited)
-        self.object.save()
-        if status[0]:
-            return JsonResponse(dict(
-                success=True, 
-                message='post updated', 
-                link='http://'+request.get_host()+'/'+str(status[2]))
-            )
+        if not request.user.is_authenticated or self.object.author != request.user:
+            return JsonResponse(dict(success=False, message='User not authenticated'))
         else:
-            return JsonResponse(dict(success=False, message=status[1]))
+            status = self.update_post(request, self.object)
+            self.object.edited = True
+            print(self.object.edited)
+            self.object.save()
+            if status[0]:
+                return JsonResponse(dict(
+                    success=True, 
+                    message='post updated', 
+                    link='http://'+request.get_host()+'/'+str(status[2])
+                ))
+            else:
+                return JsonResponse(dict(success=False, message=status[1]))
 
 def live_view(request):
     return render(request, 'timeline/live.html', {

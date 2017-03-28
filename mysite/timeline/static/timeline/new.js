@@ -98,12 +98,13 @@ function setup_inputs(i){
   //$('.newfield').prop('contenteditable',true);
   $($('.cellinputtype')[i]).click(function(){
     var i = $('.cellinputtype').index(this)
-    if (this.innerHTML == 'Aa'){
+    type = inputtype.innerHTML.replace(/^\s+|\s+$/g, '')
+    if (type == 'Aa'){
       this.innerHTML = 'MD';
       this.style.fontSize = '11px';
       this.style.paddingTop = 8;
       $($('.cellinputlang')[i]).val("markdown").attr("disabled", true);
-    } else if (this.innerHTML == 'MD'){
+    } else if (type == 'MD'){
       this.innerHTML = '{}';
       this.style.fontSize = 'inherit';
       this.style.paddingTop = 7;
@@ -120,23 +121,26 @@ function setup_inputs(i){
     $($('.cellinputlang')[i]).change();
   });
   inputtype = $('.cellinputtype')[i]
-
-  if(inputtype.innerHTML == 'MD'){
+  type = inputtype.innerHTML.replace(/^\s+|\s+$/g, '')
+  if(type == 'MD'){
+    console.log('MD')
     inputtype.style.fontSize = '11px';
     inputtype.style.paddingTop = 8;
     $($('.cellinputlang')[i]).val("markdown").attr("disabled", true);
   }
-  if(inputtype.innerHTML == '{}'){
+  if(type == '{}'){
+    console.log('{}')
     inputtype.style.fontSize = 'inherit';
     inputtype.style.paddingTop = 7;
     inputtype.style.fontFamily = "Consolas,monospace";
     $($('.cellinputlang')[i]).val("").attr("disabled", false);
   }
-  if(inputtype.innerHTML == 'Aa'){
-    this.style.paddingTop = 6;
+  if(type == 'Aa'){
+    console.log('Aa')
+    inputtype.style.paddingTop = 6;
     $($('.cellinputlang')[i]).val("text").css("color", "inherit").attr("disabled", true);
     //$('.cellinputcontent')[i].style.fontFamily = "inherit";
-    this.style.fontFamily = "inherit";
+    inputtype.style.fontFamily = "inherit";
   }
 
   $($('.cellinputlang')[i]).change(function(){
@@ -176,9 +180,9 @@ function setup_inputs(i){
 
   // setup_placeholder($('.cellinputname')[i], CELL_NAME);
   // setup_placeholder($('.cellinputlang')[i], LANG);
-  $('.cellinputtype')[i].style.fontFamily = "Consolas,monospace";
+  // $('.cellinputtype')[i].style.fontFamily = "Consolas,monospace";
   $(".cellinputlang")[i].last_correct_mode = "text";
-
+  $($('.cellinputlang')[i]).change();
   //setup_placeholder(".cellinputcontent", CELL_CONTENT);
 }
 
@@ -224,9 +228,10 @@ $(function(){
         cell.lang = cellinputlangs[i].value;
         // if (cell.lang == LANG) cell.lang = "";
         type_btn = cellinputtypes[i]
-        if (type_btn.innerHTML == 'Aa'){
+        type = type_btn.innerHTML.replace(/^\s+|\s+$/g, '')
+        if (type == 'Aa'){
           cell.type = 0;
-        } else if (type_btn.innerHTML == 'MD'){
+        } else if (type == 'MD'){
           cell.type = 1;
         } else {
           cell.type = 2;

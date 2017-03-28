@@ -9,19 +9,27 @@
   {% if post.edited %}
    - edited {{post.date|date:'Y-m-d'}}
   {% endif %}
+  {% if post.parent %}
+   - forked from <a href="/{{post.parent.id}}">{{post.parent}}</a>
+  {% endif %}
 </p>
 <p class="posttags">
   {% for tag in post.tags %}
   <a class="taglink{% if tag.lang %} lang{% endif %}" href="/tag/{{tag}}">#{{tag}}</a>
   {% endfor %}
 </p>
-{% if post.author_logged_in %}
 <p>
+{% if post.author_logged_in %}
+
   <a href='/edit/{{post.id}}'>edit</a>
   -
   <a href='/delete/{{post.id}}'>delete</a>
-</p>
+  -
 {% endif %}
+<a href='/fork/{{post.id}}'>fork</a>
+-
+<a href='/{{post.id}}/forks'>view forks</a>
+</p>
 
 <div class="container-fluid post">
   {% for i, cell in post.body %}

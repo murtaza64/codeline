@@ -10,6 +10,9 @@
   {{#if edited}}
    - edited {{#easydate}}{{last_updated}}{{/easydate}}
   {{/if}}
+  {{#if parent}}
+   - forked from <a href="/{{parent.id}}">{{parent.title}}</a>
+  {{/if}}
 </p>
 <p class="posttags">
   {{#each tags as |tag|}}
@@ -17,12 +20,15 @@
   {{/each}}
 </p>
 {{#if author_logged_in}}
-<p>
   <a href='/edit/{{id}}'>edit</a>
   -
   <a href='/delete/{{id}}'>delete</a>
-</p>
+  -
 {{/if}}
+<a href='/fork/{{id}}'>fork</a>
+-
+<a href='/{{id}}/forks'>view forks</a>
+</p>
 
 <div class="container-fluid post">
   {{#each body.cells as |cell i|}}

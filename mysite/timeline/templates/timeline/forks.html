@@ -1,0 +1,34 @@
+{% extends "timeline/header.html" %}
+{% block head %}
+  <title>{{title}}</title>
+{% endblock %}
+{% block lefttitle %}
+  {% include 'timeline/includes/lefttitle.html' %}
+{% endblock %}
+
+{% block login %}
+  {% include 'timeline/includes/login.html' %}
+{% endblock %}
+
+{% block sidebarlinks %}
+  {% include 'timeline/includes/sidebarlinks.html' %}
+{% endblock %}
+
+{% block content %}
+
+  {% if not posts %}
+    <br>
+    no forks found
+    <br><br>
+    <a href='/fork/{{parent.id}}'>be the first</a>
+  {% else %}
+    <br>
+    viewing forks for <a href='/{{parent.id}}'>{{parent.title}}</a>
+    <br>
+    <a href='/fork/{{parent.id}}'>fork this post</a>
+    <hr>
+  {% endif %}
+  {% for post in posts %}
+      {% include 'timeline/includes/post.html' %}
+  {% endfor %}
+{% endblock %}
