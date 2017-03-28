@@ -38,12 +38,16 @@ function hljs_worker(){
     onmessage = function(event) {
         importScripts(event.data.url + 'static/js/highlight.min.js');
         if(event.data.lang){
-            var result = self.hljs.highlight(event.data.lang, event.data.code);
+            try {
+                var result = self.hljs.highlight(event.data.lang, event.data.code).value;
+            } catch (error) {
+                var result = event.data.code;
+            }
         }
         else {
-            var result = self.hljs.highlightAuto(event.data.code);
+            var result = self.hljs.highlightAuto(event.data.code).value;
         }
-        postMessage(result.value);
+        postMessage(result);
     }
 }
 //from uberschmekel on StackOverflow

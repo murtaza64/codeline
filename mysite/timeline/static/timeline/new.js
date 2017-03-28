@@ -98,7 +98,7 @@ function setup_inputs(i){
   //$('.newfield').prop('contenteditable',true);
   $($('.cellinputtype')[i]).click(function(){
     var i = $('.cellinputtype').index(this)
-    type = inputtype.innerHTML.replace(/^\s+|\s+$/g, '')
+    type = this.innerHTML.replace(/^\s+|\s+$/g, '')
     if (type == 'Aa'){
       this.innerHTML = 'MD';
       this.style.fontSize = '11px';
@@ -209,7 +209,7 @@ $(function(){
     post.title = $('#titlefield')[0].value;
     //if (post.title == POST_TITLE) post.title = "";
     post.tagstring = $('#tagfield')[0].value;
-    if (post.tagstring == "") post.tagstring = "untagged";
+    //if (post.tagstring == "") post.tagstring = "untagged";
     post.anonymous = $("#anonymousbox").is(':checked');
     post.cells = [];
     var cellfields = $('.cellfield');

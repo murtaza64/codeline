@@ -297,17 +297,22 @@ class NewPostView(TemplateView):
             post.title = 'untitled '+str(post.id)
         tags = postdict['tagstring'].lower().strip().split()
         print(tags)
-        for tag in tags:
-            tag = ''.join([c for c in tag if c in 'abcdefghijklmnopqrstuvwxyz1234567890-_.'])
-            tag_obj = Tag.objects.get_or_create(name=tag, defaults={'lang': False})[0]
-            post.tags.add(tag_obj)
-            print(tag)
         print(postdict['cells'])
         if (not postdict['cells']):
             return (False, 'empty post', post.id)
         body = dict(cells=postdict['cells'])
         post.body = json.dumps(body)
-        print(post)
+        post.tags.clear()
+        for cell in body['cells']:
+            if cell['lang'] and cell['type'] == 2:
+                tag_obj = Tag.objects.get_or_create(name=cell['lang'].lower(), defaults={'lang': True})[0] #TODO
+                post.tags.add(tag_obj)
+        for tag in tags:
+            tag = ''.join([c for c in tag if c in 'abcdefghijklmnopqrstuvwxyz1234567890-_.'])
+            tag_obj = Tag.objects.get_or_create(name=tag, defaults={'lang': False})[0]
+            post.tags.add(tag_obj)
+        if not post.tags.all():
+            post.tags.add(Tag.objects.get(name='untagged'))
         post.save()
         return (True, '', post.id)
 
