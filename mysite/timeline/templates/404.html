@@ -1,0 +1,29 @@
+{% extends "timeline/header.html" %}
+{% block head %}
+  <title>page not found | codeli.ne</title>
+{% endblock %}
+{% block subtitle %}
+
+{% endblock %}
+{% block lefttitle %}
+  <br>
+  <center>
+    <a class="title" href="/">
+      <h3>codeli.ne</h3>
+    </a>
+    <p class = "subtitle">
+      404
+    </p>
+  </center>
+{% endblock %}
+{% block login %}
+  {% include 'timeline/includes/login.html' %}
+{% endblock %}
+{% block sidebarlinks %}
+  {% include 'timeline/includes/sidebarlinks.html' %}
+{% endblock %}
+
+{% block content %}
+<br>
+page not found
+{% endblock %}

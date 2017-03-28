@@ -1,0 +1,31 @@
+{% extends "timeline/header.html" %}
+{% block head %}
+  <title>internal server error | codeli.ne</title>
+{% endblock %}
+{% block subtitle %}
+
+{% endblock %}
+{% block lefttitle %}
+  <br>
+  <center>
+    <a class="title" href="/">
+      <h3>codeli.ne</h3>
+    </a>
+    <p class = "subtitle">
+      500
+    </p>
+  </center>
+{% endblock %}
+{% block login %}
+  {% include 'timeline/includes/login.html' %}
+{% endblock %}
+{% block sidebarlinks %}
+  {% include 'timeline/includes/sidebarlinks.html' %}
+{% endblock %}
+
+{% block content %}
+<br>
+server error
+<br>
+please contact murtaza: murtaza.javaid@gmail.com
+{% endblock %}

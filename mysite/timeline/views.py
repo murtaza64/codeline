@@ -139,7 +139,7 @@ class UserTimelineView(PostListView):
 
     def get_queryset(self):
         qs = super(UserTimelineView, self).get_queryset()
-        user = User.objects.get(username=self.kwargs['usr'])
+        user = get_object_or_404(User, username=self.kwargs['usr'])
         qs = qs.filter(author=user)
         return qs
 
