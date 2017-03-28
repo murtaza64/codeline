@@ -133,7 +133,7 @@ function setup_inputs(i){
     inputtype.style.fontSize = 'inherit';
     inputtype.style.paddingTop = 7;
     inputtype.style.fontFamily = "Consolas,monospace";
-    $($('.cellinputlang')[i]).val("").attr("disabled", false);
+    $($('.cellinputlang')[i]).attr("disabled", false);
   }
   if(type == 'Aa'){
     console.log('Aa')

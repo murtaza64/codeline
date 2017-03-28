@@ -21,8 +21,15 @@ a.subtitle{
   text-decoration: none;
 }
 a.subtitle:hover{
-  color:#a0a0a0;
+  color: #a0a0a0;
   text-decoration: none;
+}
+a{
+  color: #137aa7
+}
+a:hover, a:focus{
+  text-decoration: none;
+  color: #339ac7
 }
 
 #sidebar{

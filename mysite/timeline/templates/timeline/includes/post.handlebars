@@ -1,36 +1,36 @@
 {% verbatim %} <!--necessary to prevent Django from trying to parse the handlebars template-->
-<p class="posttitle">
-  <a class="title" href="/{{id}}">{{title}}</a>
-</p>
-<p class="postdate">
-  {{#if author}}
-  <a class="datelink" href="/user/{{author}}/">{{author}}</a> - 
+<div class="post">
+  <p class="posttitle">
+    <a class="title" href="/{{id}}">{{title}}</a>
+  </p>
+  <p class="postdate">
+    {{#if author}}
+    <a href="/user/{{author}}/">{{author}}</a> - 
+    {{/if}}
+    {{#easydate}}{{date}}{{/easydate}} <!-- TODO |date:'Y-m-d' -->
+    {{#if edited}}
+    - edited {{#easydate}}{{last_updated}}{{/easydate}}
+    {{/if}}
+    {{#if parent}}
+    - forked from <a href="/{{parent.id}}">{{parent.title}}</a>
+    {{/if}}
+  </p>
+  <p class="posttags">
+    {{#each tags as |tag|}}
+    <a class="taglink{{#if tag.lang}} lang{{/if}}" href="/tag/{{tag.name}}">#{{tag.name}}</a>
+    {{/each}}
+  </p>
+  {{#if author_logged_in}}
+    <a href='/edit/{{id}}'>edit</a>
+    -
+    <a href='/delete/{{id}}'>delete</a>
+    -
   {{/if}}
-  {{#easydate}}{{date}}{{/easydate}} <!-- TODO |date:'Y-m-d' -->
-  {{#if edited}}
-   - edited {{#easydate}}{{last_updated}}{{/easydate}}
-  {{/if}}
-  {{#if parent}}
-   - forked from <a href="/{{parent.id}}">{{parent.title}}</a>
-  {{/if}}
-</p>
-<p class="posttags">
-  {{#each tags as |tag|}}
-  <a class="taglink{{#if tag.lang}} lang{{/if}}" href="/tag/{{tag.name}}">#{{tag.name}}</a>
-  {{/each}}
-</p>
-{{#if author_logged_in}}
-  <a href='/edit/{{id}}'>edit</a>
+  <a href='/fork/{{id}}'>fork</a>
   -
-  <a href='/delete/{{id}}'>delete</a>
-  -
-{{/if}}
-<a href='/fork/{{id}}'>fork</a>
--
-<a href='/{{id}}/forks'>view forks</a>
-</p>
+  <a href='/{{id}}/forks'>view forks</a>
+  </p>
 
-<div class="container-fluid post">
   {{#each body.cells as |cell i|}}
       <!-- {% if cell.title%}
         <div class="container-fluid">
@@ -51,7 +51,6 @@
         </div>
       {{/if}}
   {{/each}}
-  <div style="margin-top:-10px;"></div>
 </div>
-<br>
+<hr style='margin:15px -15px'>
 {% endverbatim %}

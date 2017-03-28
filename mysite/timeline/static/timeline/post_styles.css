@@ -8,7 +8,7 @@
 }
 
 .container-fluid.post{
-  border-left: 1px solid #d8d8d8;
+  /*border-left: 1px solid #d8d8d8;*/
   /*border-bottom: 1px solid #d8d8d8;*/
 }
 pre.codecell{
@@ -23,10 +23,10 @@ pre.codecell{
   background-color: #f6f6f6;
 }
 .cellindex{
-  padding:0;
+  padding:2px;
   margin-left:-10px;
-  color:#d0d0d0;
-  font-size:8px;
+  color:#a0a0a0;
+  font-size:12px;
   border-bottom:1px solid #e6e6e6;
   font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
@@ -39,20 +39,26 @@ pre.codecell{
   margin-bottom: 4px;
 }
 .posttags{
-  color: #909090;
+  color: #808080;
 }
 a.taglink{
   color: inherit;
 }
+a.taglink:hover{
+  color: #a0a0a0
+}
 a.taglink.lang{
   color: #c06060;
+}
+a.taglink.lang:hover{
+  color: #e08080
 }
 p.postdate{
   font-size:12px;
 }
 .posttitle{
   font-size:20px;
-  margin-top:8px;
+  margin-top:4px;
   margin-bottom:4px;
 }
 a.datelink{
