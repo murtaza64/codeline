@@ -6,7 +6,11 @@
 {% block lefttitle %}
   {% include 'timeline/includes/lefttitle.html' %}
 {% endblock %}
-
+{% block login %}
+<div style="display:flex;justify-content:center;align-items:center;">
+  <a class="loginlink" href="/login">login</a>
+</div>
+{% endblock %}
 {% block sidebarlinks %}
   {% include 'timeline/includes/sidebarlinks.html' %}
 {% endblock %}
