@@ -8,14 +8,14 @@
 {% endblock %}
 {% block login %}
 <div style="display:flex;justify-content:center;align-items:center;">
-  <a class="loginlink" href="/login">login</a>
+  <a class="loginlink" href="/login"><div class="action_link login">login</div></a>
 </div>
 {% endblock %}
 {% block sidebarlinks %}
   {% include 'timeline/includes/sidebarlinks.html' %}
 {% endblock %}
 {% block content %}
-<form method="POST">
+<form method="POST" id="registerform">
   {% csrf_token %}
   
   <input class="loginfield" id="username"  placeholder="username" name="{{form.username.name}}" 
@@ -33,8 +33,7 @@
     <p style='color:#c06060;'>{{error}}</p>
   {% endfor %}
 
-  <br><br>
-  <input type='submit'>
+  <a href="#" onclick="$('#registerform')[0].submit();"><div class="action_link">register</div></a>
   <br><br>
   {% for error in form.non_field_errors %}
     <p style='color:#c06060;'>{{error}}</p>

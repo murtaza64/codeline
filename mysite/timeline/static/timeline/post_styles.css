@@ -1,10 +1,14 @@
 .container-fluid.cell{
-  border:1px solid #e0e0e0;
+  border:1px solid #bbbbbb;
   border-radius:3px;
   margin-bottom:10px;
+  background-color: #eeeeee;
 }
 .container-fluid.cell.text p {
   margin-top: 10px;
+}
+.container-fluid.cell hr{
+  border-color:#bbbbbb;
 }
 
 .container-fluid.post{
@@ -12,22 +16,22 @@
   /*border-bottom: 1px solid #d8d8d8;*/
 }
 pre.codecell{
-  border:1px solid #e0e0e0;
+  border:1px solid #bbbbbb;
   border-radius:3px;
   padding-top: 0;
   padding-bottom: 0;
   margin-bottom: 10px;
-  background-color: #f6f6f6;
+  background-color: #eeeeee;
 }
 .hljs{
-  background-color: #f6f6f6;
+  background-color: #eeeeee;
 }
 .cellindex{
   padding:2px;
   margin-left:-10px;
   color:#a0a0a0;
   font-size:12px;
-  border-bottom:1px solid #e6e6e6;
+  border-bottom:1px solid #cccccc;
   font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 .cellindex.code{
@@ -43,9 +47,11 @@ pre.codecell{
 }
 a.taglink{
   color: inherit;
+  -webkit-transition: .1s
 }
 a.taglink:hover{
-  color: #a0a0a0
+  color: #a0a0a0;
+  -webkit-transition: .1s
 }
 a.taglink.lang{
   color: #c06060;
@@ -64,8 +70,10 @@ p.postdate{
 a.datelink{
   text-decoration: none;
   color:inherit;
+  -webkit-transition: .1s
 }
 a.datelink:hover{
   text-decoration: none;
   color:#b8b8b8;
+  -webkit-transform: .1s
 }

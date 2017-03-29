@@ -20,16 +20,16 @@
     <a class="taglink{{#if tag.lang}} lang{{/if}}" href="/tag/{{tag.name}}">#{{tag.name}}</a>
     {{/each}}
   </p>
-  {{#if author_logged_in}}
-    <a href='/edit/{{id}}'>edit</a>
-    -
-    <a href='/delete/{{id}}'>delete</a>
-    -
-  {{/if}}
-  <a href='/fork/{{id}}'>fork</a>
-  -
-  <a href='/{{id}}/forks'>view forks</a>
-  </p>
+  <div style="height: 48px;">
+    {{#if author_logged_in}}
+    <a href='/edit/{{id}}'><div class="action_link green">edit</div></a>
+    {{/if}}
+    <a href='/fork/{{id}}'><div class="action_link green">fork</div></a>
+    <a href='/{{id}}/forks'><div class="action_link">view forks</div></a>
+    {{#if author_logged_in }}
+    <a href='/delete/{{id}}'><div class="action_link red">delete</div></a>
+    {{/if}}
+  </div>
 
   {{#each body.cells as |cell i|}}
       <!-- {% if cell.title%}

@@ -19,37 +19,37 @@
     <a class="taglink{% if tag.lang %} lang{% endif %}" href="/tag/{{tag}}">#{{tag}}</a>
     {% endfor %}
   </p>
-  <p>
-  {% if post.author_logged_in %}
-
-    <a href='/edit/{{post.id}}'>edit</a>
-    -
-    <a href='/delete/{{post.id}}'>delete</a>
-    -
-  {% endif %}
-  <a href='/fork/{{post.id}}'>fork</a>
-  -
-  <a href='/{{post.id}}/forks'>view forks</a>
-  </p>
-  {% for i, cell in post.body %}
-      <!-- {% if cell.title%}
-        <div class="container-fluid">
-          <h5 style="margin-top: 0; margin-bottom: 5px;">{{cell.title}}</h5>
-        </div>
-      {% endif %} -->
-
-      {% if cell.type == 2 %}
-          <pre class="codecell"><div class="cellindex code">{{i}}{% if cell.lang %} ({{cell.lang}}){% endif %}{% if cell.title %} - {{cell.title}}{% endif %}</div><code class = "{{cell.lang}}">{{cell.content}}</code></pre>
-      {% else %}
-        <div class="container-fluid cell text">
-          <div class="cellindex">
-              {{i}} ({% if cell.type == 0 %}text{% else %}markdown{% endif %}){% if cell.title %} - {{cell.title}}{% endif %}
+  <div style="height: 48px;">
+    {% if post.author_logged_in %}
+    <a href='/edit/{{post.id}}'><div class="action_link green">edit</div></a>
+    {% endif %}
+    <a href='/fork/{{post.id}}'><div class="action_link green">fork</div></a>
+    <a href='/{{post.id}}/forks'><div class="action_link">view forks</div></a>
+    {% if post.author_logged_in %}
+    <a href='/delete/{{post.id}}'><div class="action_link red">delete</div></a>
+    {% endif %}
+  </div>
+  <div>
+    {% for i, cell in post.body %}
+        <!-- {% if cell.title%}
+          <div class="container-fluid">
+            <h5 style="margin-top: 0; margin-bottom: 5px;">{{cell.title}}</h5>
           </div>
-          <p>
-              {{cell.content|safe}}
-          </p> <!--TODO:30 make sure input is safe-->
-        </div>
-      {% endif %}
-  {% endfor %}
+        {% endif %} -->
+
+        {% if cell.type == 2 %}
+            <pre class="codecell"><div class="cellindex code">{{i}}{% if cell.lang %} ({{cell.lang}}){% endif %}{% if cell.title %} - {{cell.title}}{% endif %}</div><code class = "{{cell.lang}}">{{cell.content}}</code></pre>
+        {% else %}
+          <div class="container-fluid cell text">
+            <div class="cellindex">
+                {{i}} ({% if cell.type == 0 %}text{% else %}markdown{% endif %}){% if cell.title %} - {{cell.title}}{% endif %}
+            </div>
+            <p>
+                {{cell.content|safe}}
+            </p> <!--TODO:30 make sure input is safe-->
+          </div>
+        {% endif %}
+    {% endfor %}
+  </div>
 </div>
 <hr style='margin:15px -15px'>

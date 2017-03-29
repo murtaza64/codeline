@@ -26,7 +26,8 @@ CELLINPUT_HTML = '\
   </div>\
   <div class="cic_container">\
     <div class="ace" id="ace_editor0"></div>\
-  </div>';
+  </div>\
+</div>';
 
 function modeify(mode_str){
   if (mode_str == "c" || mode == "c++" || mode == "cpp"){

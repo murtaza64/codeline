@@ -15,25 +15,32 @@
 {% endblock %}
 {% block login %}
 <div style="display:flex;justify-content:center;align-items:center;">
-  <a class="loginlink" href="/register">register</a>
+  <a class="loginlink" href="/register"><div class="action_link login">register</div></a>
 </div>
 {% endblock %}
 {% block sidebarlinks %}
   {% include 'timeline/includes/sidebarlinks.html' %}
 {% endblock %}
 {% block content %}
-<form method="POST">
+<form id="loginform" method="POST">
   {% csrf_token %}
   <input class="loginfield" id="username" placeholder="username" name="username" type="text"
-  style="{% if form.non_field_errors %}border-color: #c06060;{% endif %}">
+  style="{% if form.errors.username %}border-color: #c06060;{% endif %}">
+  {% for error in form.errors.username %}
+    <p style='color:#c06060;'>{{error}}</p>
+  {% endfor %}
+
   <input class="loginfield" id="password" placeholder="password" name="password" type="password"
-  style="{% if form.non_field_errors %}border-color: #c06060;{% endif %}">
-  <br><br>
+  style="{% if form.errors.password %}border-color: #c06060;{% endif %}">
+  {% for error in form.errors.password %}
+    <p style='color:#c06060;'>{{error}}</p>
+  {% endfor %}
+
   {% for error in form.non_field_errors %}
     <p style='color:#c06060;'>{{error}}</p>
   {% endfor %}
-  <input type="submit" value="Login">
+  <br><br>
+  <a href="#" onclick="$('#loginform')[0].submit();"><div class="action_link">login</div></a>
   <input type="hidden" id="next" name="next" value="/">
-
 </form>
 {% endblock %}

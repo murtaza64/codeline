@@ -8,9 +8,21 @@ a.subtle:hover{
 a.title{
   color: inherit;
 }
+#maintitle{
+  color: #333;
+  margin: 10px 15px;
+  padding: 10px;
+  border-radius: 3px;
+  border: 2px solid #eeeeee;
+  -webkit-transition: .2s
+}
 a.title:hover{
-  color:#888888;
   text-decoration: none;
+}
+#maintitle:hover{
+  color:#e01dc9;
+  border: 2px solid #e01dc9;
+  -webkit-transition: .2s;
 }
 p.subtitle{
   color: #909090;
@@ -19,10 +31,12 @@ p.subtitle{
 a.subtitle{
   color: #909090;
   text-decoration: none;
+  -webkit-transition: .2s
 }
 a.subtitle:hover{
   color: #a0a0a0;
   text-decoration: none;
+  -webkit-transform: .3s
 }
 a{
   color: #137aa7
@@ -175,4 +189,97 @@ td{
   margin-top: 5px;
   border: 1px solid #d8d8d8;
   width:100%;
+}
+
+#sidebar_col{
+  height:100%;
+  background-color: #eeeeee;
+}
+#sidebar_col hr{
+  border-color:#bbbbbb;
+}
+#content_col{
+  height:100%; 
+  overflow-y:scroll; 
+  border-left: 1px solid #cccccc;
+}
+#new_post_link{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background-color:#55aa79;
+  border: 2px solid #55aa79;
+  padding:10px 0;
+  margin:0 3px;
+  border-radius: 3px;
+  transition: .2s;
+  color:#eeeeee
+}
+#new_post_link:hover{
+  background-color: #66cc88;
+  transition: .2s;
+}
+#new_post_link:active{
+  background-color: #449977;
+  border-color: #338866;
+  transition: .1s;
+}
+
+.action_link{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  float:left;
+  background-color:#eeeeee;
+  border: 2px solid #5579aa;
+  padding:3px 8px;
+  margin:0 10px 0 0;
+  border-radius: 3px;
+  transition: .2s;
+  color:#5579aa;
+}
+
+.action_link:hover{
+  background-color: #5579aa;
+  color: #eeeeee;
+  transition: .2s;
+}
+
+.action_link:active{
+  background-color: #6699ee;
+  border-color: #6699ee;
+  color: #eeeeee;
+  transition: .1s;
+}
+
+.action_link.green{
+  border: 2px solid #55aa79;
+  color: #55aa79;
+}
+.action_link.green:hover{
+  background-color: #55aa79;
+  color: #eeeeee;
+}
+.action_link.green:active{
+  background-color: #66cc88;
+  border-color: #66cc88;
+  color: #eeeeee;
+}
+
+.action_link.red{
+  border: 2px solid #aa3333;
+  color: #aa3333;
+}
+.action_link.red:hover{
+  background-color: #aa3333;
+  color: #eeeeee;
+}
+.action_link.red:active{
+  background-color: #cc5555;
+  border-color: #cc5555;
+  color: #eeeeee;
+}
+
+.action_link.login{
+  margin:0;
 }
