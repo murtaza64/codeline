@@ -233,7 +233,7 @@ td{
   align-items:center;
   float:left;
   background-color:#eeeeee;
-  border: 2px solid #5579aa;
+  border: 1px solid #5579aa;
   padding:3px 8px;
   margin:0 10px 0 0;
   border-radius: 3px;
@@ -263,7 +263,7 @@ td{
 }
 
 .action_link.green{
-  border: 2px solid #55aa79;
+  border: 1px solid #55aa79;
   color: #55aa79;
 }
 .action_link.green:hover{
@@ -277,7 +277,7 @@ td{
 }
 
 .action_link.red{
-  border: 2px solid #aa3333;
+  border: 1px solid #aa3333;
   color: #aa3333;
 }
 .action_link.red:hover{
