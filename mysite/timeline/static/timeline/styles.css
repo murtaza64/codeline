@@ -14,7 +14,7 @@ a.title{
   padding: 10px;
   border-radius: 3px;
   border: 2px solid #eeeeee;
-  -webkit-transition: .2s
+  transition: .2s
 }
 a.title:hover{
   text-decoration: none;
@@ -22,7 +22,7 @@ a.title:hover{
 #maintitle:hover{
   color:#e01dc9;
   border: 2px solid #e01dc9;
-  -webkit-transition: .2s;
+  transition: .2s;
 }
 p.subtitle{
   color: #909090;
@@ -31,12 +31,12 @@ p.subtitle{
 a.subtitle{
   color: #909090;
   text-decoration: none;
-  -webkit-transition: .2s
+  transition: .2s
 }
 a.subtitle:hover{
   color: #a0a0a0;
   text-decoration: none;
-  -webkit-transform: .3s
+  transform: .3s
 }
 a{
   color: #137aa7

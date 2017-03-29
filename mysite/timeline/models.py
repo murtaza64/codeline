@@ -7,7 +7,7 @@ class Post(models.Model):
     date = models.DateTimeField()
     last_updated = models.DateTimeField()
     edited = models.BooleanField(default=False)
-    author = models.ForeignKey(User, default=1, on_delete=models.SET_NULL, null=True)
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     parent = models.ForeignKey('Post', null=True, on_delete=models.SET_NULL)
     tags = models.ManyToManyField('Tag')
     private = models.BooleanField(default=False)
