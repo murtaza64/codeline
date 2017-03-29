@@ -138,7 +138,7 @@ $(function(){
             $("#filter_go").click();
             console.log('enter')
         }
-        console.log(e)
+        //console.log(e)
     });
     $("#filter_go").click(filter);
     Handlebars.registerHelper('easydate', function(options){

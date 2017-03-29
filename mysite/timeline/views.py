@@ -89,6 +89,9 @@ class JSONPostViewMixin(TemplateResponseMixin):
                 for cell in fields['body']['cells']:
                     if cell['type'] == 2:
                         cell['is_code'] = True
+                    if cell['type'] == 1:
+                        cell['content'] = markdown(cell['content'])
+                        cell['is_markdown'] = True
             else:
                 fields['body'] = {'cells':[]}
             fields['private'] = p.private
