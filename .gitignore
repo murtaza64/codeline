@@ -10,3 +10,4 @@ STATIC_FILES/
 mysite/mysite/settings.py
 mysite/static/*
 mysite/db.sqlite3
+mysite/timeline/migrations/*
