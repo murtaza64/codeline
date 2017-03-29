@@ -4,12 +4,19 @@
         <a class="loginlink" href="/login"><div class="action_link login">login</div></a>
         <a class="loginlink" href="/register" style="float:right"><div class="action_link login">register</div></a>
         {% else %}
+        <table style="font-size:14px; width: 100%"><tr style="width:100%"><td style="padding: 0;">
         <a class="loginlink" href="/user/{{user.get_username}}">
-            <div class="action_link login">
+            <div class="action_link login" style="width:100%">
             {{user.get_username}}
             </div>
         </a>
-        <a class="loginlink" href="/logout" style="float:right"><div class="action_link login red">logout</div></a>
+        </td></tr>
+        <tr style="width:100%"><td style="padding: 10px 0;">
+            <div>
+        <a class="loginlink" href="/logout"><div class="action_link login red" 
+        style="width:100%">logout</div></a>
+        </div
+        </td></tr></table>
         {% endif %}
     </div>  
 </div>

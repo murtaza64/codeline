@@ -92,13 +92,14 @@ td{
     /*color: #909090;*/
 }
 .container-fluid.cellfield_container{
-  border-left: 1px solid #d8d8d8;
-  padding-right: 0;
+  padding: 0;
 }
 .container-fluid.cellfield{
-  border:1px solid #e0e0e0;
+  border:1px solid #cccccc;
+  background-color: #eeeeee;
   border-radius:3px;
   margin-bottom:10px;
+  padding: 10px 10px;
 }
 .cellinputmeta{
   border-bottom:1px solid #e6e6e6;
@@ -114,7 +115,6 @@ td{
   font-size: 11px;
   padding: 3px;
   border: 1px solid #d8d8d8;
-
 }
 .newfield.cellinputlang{
    width: 80px;
@@ -162,9 +162,11 @@ td{
 }
 
 #addcell {
-  width: 25px;
-  height: 25px;
   padding-top: 1px;
+  width:40px;
+  height:40px;
+  margin: 0;
+  background-color: #eeeeee;
 }
 
 .loginlink {
@@ -239,6 +241,14 @@ td{
   color:#5579aa;
 }
 
+.action_link.cellinput{
+  width:30px;
+  height: 30px;
+  margin:5px;
+  margin-left: 10px;
+  background-color: #f0f0f0;
+}
+
 .action_link:hover{
   background-color: #5579aa;
   color: #eeeeee;
@@ -282,4 +292,35 @@ td{
 
 .action_link.login{
   margin:0;
+}
+
+
+
+.action_link.cellinput.cellinputtype{
+  width: 40px;
+  height: 40px;
+  margin:5px;
+  margin-left: 5px;
+  padding: 0;
+  font-size: 14px;
+  vertical-align: center;
+}
+.ace{
+  border: 1px solid #cccccc
+}
+
+.action_link.submit{
+  background-color:#55aa79;
+  border: 2px solid #55aa79;
+  color: #eeeeee;
+  padding: 5px 10px;
+}
+.action_link.submit:hover{
+  background-color: #66cc88;
+  transition: .2s;
+}
+.action_link.submit:active{
+  background-color: #449977;
+  border-color: #338866;
+  transition: .1s;
 }

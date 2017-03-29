@@ -1,33 +1,10 @@
 
 
-TEXTAREA_HTML = '<textarea rows=2 class="newfield cellinputcontent"></textarea>';
-
 // CELL_NAME = "cell name";
 // CELL_CONTENT = "cell content";
 // TAGS = "tag1 tag2 ...";
 // POST_TITLE = "post title";
 // LANG = "language";
-
-CELLINPUT_HTML = '\
-<div class="container-fluid cellfield" >\
-  <div class="cellinputmeta">\
-    <table><tr>\
-      <td><div class="newbutton cellinputtype">{}</div></td>\
-      <td style="width: 100%; padding-left:5px">\
-        <input type=text class="newfield cellinputname" placeholder="cell name">\
-      </td>\
-      <td>\
-        <input type=text class="newfield cellinputlang" placeholder="language">\
-      </td>\
-      <td>\
-        <div class="newbutton removecell">-</div>\
-      </td>\
-    </tr></table>\
-  </div>\
-  <div class="cic_container">\
-    <div class="ace" id="ace_editor0"></div>\
-  </div>\
-</div>';
 
 function modeify(mode_str){
   if (mode_str == "c" || mode == "c++" || mode == "cpp"){
@@ -82,7 +59,7 @@ function setup_ace(i){
   var editor = ace.edit(editor_id);
   editor.setTheme("ace/theme/chrome");
   editor.setOptions({
-    minLines: 5,
+    minLines: 8,
     maxLines: 5000
   });
   editor.getSession().setUseSoftTabs(true);
@@ -102,21 +79,17 @@ function setup_inputs(i){
     type = this.innerHTML.replace(/^\s+|\s+$/g, '')
     if (type == 'Aa'){
       this.innerHTML = 'MD';
-      this.style.fontSize = '11px';
-      this.style.paddingTop = 8;
+      this.style.fontSize = "13px";
       $($('.cellinputlang')[i]).val("markdown").attr("disabled", true);
     } else if (type == 'MD'){
       this.innerHTML = '{}';
-      this.style.fontSize = 'inherit';
-      this.style.paddingTop = 7;
+      this.style.fontSize = "14px";
       this.style.fontFamily = "Consolas,monospace";
       $($('.cellinputlang')[i]).val("").attr("disabled", false);
 
     } else {
-      this.style.paddingTop = 6;
       this.innerHTML = 'Aa';
       $($('.cellinputlang')[i]).val("text").css("color", "inherit").attr("disabled", true);
-      //$('.cellinputcontent')[i].style.fontFamily = "inherit";
       this.style.fontFamily = "inherit";
     }
     $($('.cellinputlang')[i]).change();
@@ -125,22 +98,17 @@ function setup_inputs(i){
   type = inputtype.innerHTML.replace(/^\s+|\s+$/g, '')
   if(type == 'MD'){
     console.log('MD')
-    inputtype.style.fontSize = '11px';
-    inputtype.style.paddingTop = 8;
+    inputtype.style.fontSize = '13px';
     $($('.cellinputlang')[i]).val("markdown").attr("disabled", true);
   }
   if(type == '{}'){
     console.log('{}')
-    inputtype.style.fontSize = 'inherit';
-    inputtype.style.paddingTop = 7;
     inputtype.style.fontFamily = "Consolas,monospace";
     $($('.cellinputlang')[i]).attr("disabled", false);
   }
   if(type == 'Aa'){
     console.log('Aa')
-    inputtype.style.paddingTop = 6;
     $($('.cellinputlang')[i]).val("text").css("color", "inherit").attr("disabled", true);
-    //$('.cellinputcontent')[i].style.fontFamily = "inherit";
     inputtype.style.fontFamily = "inherit";
   }
 
@@ -161,19 +129,27 @@ function setup_inputs(i){
       editor.getSession().setMode("ace/mode/" + modeify(mode));
   });
 
+  $($('.moveup')[i]).click(function (){
+    var k = $('.moveup').index(this);
+    $($('#cellinputs').children()[k]).insertBefore($('#cellinputs').children()[k-1])
+  })
+  $($('.movedown')[i]).click(function (){
+    var k = $('.movedown').index(this);
+    $($('#cellinputs').children()[k]).insertAfter($('#cellinputs').children()[k+1])
+  })
+
+
   $($('.removecell')[i]).on("click.new", function remove_cell_click(){
-    this.style.background = "linear-gradient(#e0b0b0, #c8a0a0)";
-    this.style.borderColor = "#a85050";
+    this.style.borderColor = "#cc5555";
+    this.style.backgroundColor = "#dd6666";
     $(this).on("click.new", function delete_cell(){
+      this.style.backgroundColor="#ee7777";
       n = $('.cellfield').length
-      /*for (var j = i+1; j < n; j++){ //cascade ids for ace editors
-        $('.ace')[j].id="ace_editor"+(j-1).toString();
-      }*/
       $($('.cellfield')[i]).css('display', 'none');
       $('.cellfield')[i].using_cell = false;
     }).mouseleave(function(){
-      this.style.background = "linear-gradient(#e8e8e8, #d6d6d6)";
-      this.style.borderColor = "#b8b8b8";
+      this.style.backgroundColor = "";
+      this.style.borderColor = "#aa3333";
       $(this).off("click.new");
       $(this).on("click.new", remove_cell_click);
     })
@@ -189,6 +165,8 @@ function setup_inputs(i){
 
 $(function(){
   console.log('ready');
+  CELLINPUT_HTML = $('#empty_cell_template')[0].innerHTML
+  $('#empty_cell_template').remove()
   //$('.newfield').css('color', '#909090');
   var cellfield_n = $('.cellfield').length;
   for(var k = 0; k < cellfield_n; k++){
@@ -202,6 +180,8 @@ $(function(){
     i = $('.cellfield').length-1;
     setup_inputs(i);
   });
+
+  
 
   $('#submit').click(function(){
     statusclear();

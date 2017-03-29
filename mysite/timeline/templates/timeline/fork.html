@@ -14,6 +14,29 @@
 {% block sidebarlinks %}
 {% endblock %}
 {% block content %}
+<div id="empty_cell_template"  style="display: none;">
+    <div class="container-fluid cellfield">
+      <table style="width:100%">
+      <tr>
+        <td style="width:50px; padding: 0; vertical-align: top;">
+            <a href="#"><div class="action_link cellinput green cellinputtype" style="margin-top:0;">{}</div></a>
+            <a href="#"><div class="action_link cellinput moveup">↑</div></a>
+            <a href="#"><div class="action_link cellinput red removecell">-</div></a>
+            <a href="#"><div class="action_link cellinput movedown" style="margin-bottom:0; padding-top:0;">↓</div></a>
+        </td>
+        <td style="padding:0; padding-left: 10px;">
+          <table style="padding:0; width: 100%;"><tr>
+            <td style="padding:0; width: 100%;"><input type=text class="newfield cellinputname" placeholder="cell name"></td>
+            <td style="padding:0;"><input type=text class="newfield cellinputlang" placeholder="language"></td>
+          </tr></table>
+          <div class="cic_container">
+            <div class="ace" id="ace_editor0"></div>
+          </div>
+        </td>
+      </tr>
+      </table>
+    </div>
+  </div>
   {% csrf_token %}
   <input type="text" class="newfield title" id="titlefield" placeholder="post title" value="{{post.title}}">
   <input type="text" class="newfield tags" id="tagfield" placeholder="tag1 tag2 ..." 
@@ -23,33 +46,34 @@
     <div id="cellinputs">
       {% for i, cell in post.body %}
       <div class="container-fluid cellfield" >
-        <div class="cellinputmeta">
-          <table><tr>
-            <td><div class="newbutton cellinputtype">
-              {% if cell.type == 2 %}{}{% endif %}
-              {% if cell.type == 0 %}Aa{% endif %}
-              {% if cell.type == 1 %}MD{% endif %}
-            </div></td>
-            <td style="width: 100%; padding-left:5px">
-              <input type=text class="newfield cellinputname" placeholder="cell name" value="{{cell.title}}">
+        <table style="width:100%">
+          <tr>
+            <td style="width:50px; padding: 0; vertical-align: top;">
+               <a href="#"><div class="action_link cellinput green cellinputtype" style="margin-top:0;">
+                 {% if cell.type == 2 %}{}{% endif %}
+                 {% if cell.type == 0 %}Aa{% endif %}
+                 {% if cell.type == 1 %}MD{% endif %}
+               </div></a>
+               <a href="#"><div class="action_link cellinput moveup">↑</div></a>
+               <a href="#"><div class="action_link cellinput red removecell">-</div></a>
+               <a href="#"><div class="action_link cellinput movedown" style="margin-bottom:0; padding-top:0;">↓</div></a>
             </td>
-            <td>
-              <input type=text class="newfield cellinputlang" placeholder="language" 
-              value="{%if cell.lang %}{{cell.lang}}{% endif %}">
+            <td style="padding:0; padding-left: 10px;">
+              <table style="padding:0; width: 100%;"><tr>
+                <td style="padding:0; width: 100%;"><input type=text class="newfield cellinputname" placeholder="cell name" value="{{cell.title}}"></td>
+                <td style="padding:0;"><input type=text class="newfield cellinputlang" placeholder="language" value="{{cell.lang}}"></td>
+              </tr></table>
+              <div class="cic_container">
+                <div class="ace" id="ace_editor{{i}}">{{cell.content}}</div>
+              </div>
             </td>
-            <td>
-              <div class="newbutton removecell">-</div>
-            </td>
-          </tr></table>
-        </div>
-        <div class="cic_container">
-          <div class="ace" id="ace_editor{{i}}">{{cell.content}}</div>
-        </div>
+          </tr>
+        </table>
       </div>
       {% endfor %}
       <!--<div style="margin-top:-10px;"></div>-->
     </div>
-    <div class="newbutton" id="addcell">+</div>
+    <a href="#"><div class="action_link cellinput" id="addcell">+</div></a>
   </div>
   <br>
   {% if user.is_authenticated %}
@@ -59,7 +83,7 @@
   {% endif %}
   &nbsp post anonymously
   <br><br>
-  <div class="newbutton" id="submit">submit</div>
+  <a href="#"><div class="action_link submit" id="submit">submit</div></a>
   <br>
   <div id="status" style="margin-top:10px;"> </div>
   <br><br><br>
