@@ -66,8 +66,9 @@ function setup_ace(i){
   editor.getSession().setUseWrapMode(true);
   editor.getSession().on("changeMode", function(){
     console.log('changed mode');
-    $($(".cellinputlang")[i]).css("border-color", "#409060");
-    $(".cellinputlang")[i].last_correct_mode = modeify($(".cellinputlang")[i].value.toLowerCase());
+    var k = $('.ace').index(editor.container)
+    $($(".cellinputlang")[k]).css("border-color", "#409060");
+    $(".cellinputlang")[k].last_correct_mode = modeify($(".cellinputlang")[k].value.toLowerCase());
   });
 }
 function setup_inputs(i){
@@ -113,6 +114,7 @@ function setup_inputs(i){
   }
 
   $($('.cellinputlang')[i]).change(function(){
+    var k = $('.cellinputlang').index(this);
     mode = this.value.toLowerCase()
       if (modeify(mode) == this.last_correct_mode) {
         this.style.borderColor = "#409060";
@@ -120,7 +122,7 @@ function setup_inputs(i){
       }
       this.style.borderColor = "#c06060";
       console.log('cellinputlang change');
-      var editor = ace.edit("ace_editor" + i.toString());
+      var editor = ace.edit("ace_editor" + k.toString());
       if (this.value == ""){
         this.style.borderColor = "#d8d8d8";
         return;
@@ -131,11 +133,18 @@ function setup_inputs(i){
 
   $($('.moveup')[i]).click(function (){
     var k = $('.moveup').index(this);
-    $($('#cellinputs').children()[k]).insertBefore($('#cellinputs').children()[k-1])
+    $($('#cellinputs').children()[k]).insertBefore($('#cellinputs').children()[k-1]);
+    $($('.ace')[k-1]).attr("id", "temp");
+    $($('.ace')[k]).attr("id", "ace_editor" + k.toString());
+    $($('.ace')[k-1]).attr("id", "ace_editor" + (k-1).toString());
+
   })
   $($('.movedown')[i]).click(function (){
     var k = $('.movedown').index(this);
-    $($('#cellinputs').children()[k]).insertAfter($('#cellinputs').children()[k+1])
+    $($('#cellinputs').children()[k]).insertAfter($('#cellinputs').children()[k+1]);
+    $($('.ace')[k+1]).attr("id", "temp");
+    $($('.ace')[k]).attr("id", "ace_editor" + k.toString());
+    $($('.ace')[k+1]).attr("id", "ace_editor" + (k+1).toString());
   })
 
 
