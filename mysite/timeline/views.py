@@ -322,7 +322,8 @@ class NewPostView(TemplateView):
                 link='http://'+request.get_host()+'/'+str(status[2])
             ))
         else:
-            return JsonResponse(dict(success=False, error=status[1]))
+            newpost.delete()
+            return JsonResponse(dict(success=False, message=status[1]))
 
 class ForkPostView(NewPostView, SingleObjectMixin):
     template_name = 'timeline/fork.html'
@@ -367,6 +368,7 @@ class ForkPostView(NewPostView, SingleObjectMixin):
                 link='http://'+request.get_host()+'/'+str(status[2])
             ))
         else:
+            newpost.delete()
             return JsonResponse(dict(success=False, message=status[1]))
 
 class EditPostView(ForkPostView):

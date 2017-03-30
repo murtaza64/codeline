@@ -8,12 +8,6 @@
     },
     {
       "lang": null,
-      "type": 2,
-      "content": "class NewPostView(TemplateView):\n    template_name = 'timeline\/new.html'\n    def get_context_data(self, **kwargs):\n        context = super(NewPostView, self).get_context_data(**kwargs)\n        context['subtitle'] = '\/new'\n        context['title'] = 'new post | codeli.ne'\n        c = RequestContext(self.request)\n        print(context)\n        print(c)\n        return context\n    def post(self, request, *args, **kwargs):\n        newpost = Post()\n        postdict = json.loads(str(request.body, 'utf-8'))\n        try:\n            newpost.author = User.objects.get(username=postdict['author'])\n            newpost.title = postdict['title']\n            newpost.date = datetime.datetime.now()\n        except Exception as e:\n            print('SOME VALIDATION ERROR')\n            print(e)\n            return JsonResponse(dict(error='true'))\n        newpost.save()\n        if not newpost.title:\n            newpost.title = 'untitled '+str(newpost.id)\n        tags = postdict['tagstring'].split()\n        print(tags)\n        for tag in tags:\n            try:\n                tag = ''.join([c for c in tag if c in 'abcdefghijklmnopqrstuvwxyz1234567890-_.'])\n                tag_obj = Tag.objects.get(name=tag)\n            except Tag.DoesNotExist:\n                tag_obj = Tag()\n                tag_obj.name = tag\n                tag_obj.save()\n            newpost.tags.add(tag_obj)\n            print(tag)\n        print(postdict['cells'])\n        if (not postdict['cells']):\n            newpost.delete()\n            return JsonResponse(dict(success=False, error='empty post'))\n        body = dict(cells=postdict['cells'])\n        newpost.body = json.dumps(body)\n        print(newpost)\n        newpost.save()\n        return JsonResponse(dict(success=True, link='http:\/\/'+request.get_host()+'\/'+str(newpost.id)))\n",
-      "title": "py"
-    },
-    {
-      "lang": null,
       "type": 1,
       "content": "## some markdown\n* just\n* for\n* bants",
       "title": "md"
