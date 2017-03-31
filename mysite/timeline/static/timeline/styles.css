@@ -168,6 +168,12 @@ td{
   margin: 0;
   background-color: #eeeeee;
 }
+#addcell:hover {
+  background-color: #5579aa;
+}
+#addcell:active {
+  background-color: #6699ee;
+}
 
 .loginlink {
   color: #333333;
