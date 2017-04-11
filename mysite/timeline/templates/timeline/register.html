@@ -19,7 +19,7 @@
   {% csrf_token %}
   
   <input class="loginfield" id="username"  placeholder="username" name="{{form.username.name}}" 
-  value="{{form.username.value}}" type="text" 
+  value="{% if form.username.value %}{{form.username.value}}{% endif %}" type="text" 
   style="{% if form.username.errors%}border-color: #c06060;{% endif %}">
   {% for error in form.errors.username %}
     <p style='color:#c06060;'>{{error}}</p>
