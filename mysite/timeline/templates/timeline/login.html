@@ -25,7 +25,7 @@
 <form id="loginform" method="POST">
   {% csrf_token %}
   <input class="loginfield" id="username" placeholder="username" name="username" type="text"
-  style="{% if form.errors.username %}border-color: #c06060;{% endif %}">
+  value="{{form.username.value}}" style="{% if form.errors.username %}border-color: #c06060;{% endif %}">
   {% for error in form.errors.username %}
     <p style='color:#c06060;'>{{error}}</p>
   {% endfor %}
