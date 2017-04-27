@@ -21,4 +21,13 @@
   {% for post in posts %}
       {% include 'timeline/includes/post.html' %}
   {% endfor %}
+  page {{page_obj.number}} of {{page_obj.paginator.num_pages}}
+  <br><br>
+  {% if page_obj.has_previous %}
+    <a href="?page={{page_obj.previous_page_number}}"><div class="action_link">previous page</div></a>
+  {% endif %}
+  {% if page_obj.has_next %}
+    <a href="?page={{page_obj.next_page_number}}"><div class="action_link">next page</div></a>
+  {% endif %}
+  <br><br>
 {% endblock %}
