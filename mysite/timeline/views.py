@@ -44,10 +44,11 @@ def assemble_post(post, request):
 
     tags = post.tags.all().order_by('-lang', 'name')
     send_post = {'id': post.id, 'title': post.title, 'author': post.author,
-        'date': post.date, 'last_updated': post.last_updated, 'edited': post.edited, 
+        'date': post.date, 'last_updated': post.last_updated, 'edited': post.edited,
         'private': post.private, 'author_logged_in': request.user == post.author,
         'parent': post.parent, 'tags': tags, 'body': enumerate(cells)}
     return send_post
+
 
 class JSONPostViewMixin(TemplateResponseMixin):
 
@@ -250,15 +251,15 @@ class FilterTimelineView(PostListView):
                     tags.append(Tag.objects.get(name=t))
                 except Tag.DoesNotExist:
                     pass
-            posts = list(posts_minusdate.filter(tags__in=tags))
+            posts = [[p, 0] for p in list(posts_minusdate.filter(tags__in=tags))]
             for post in posts:
-                matching_tags = len([t for t in post.tags.all() if t in tags])
+                post[1] = len([t for t in post[0].tags.all() if t in tags])
             for post in posts:
-                if post.id not in scoredict:
-                    qs.append(post)
-                    scoredict[post.id] = 20*matching_tags
+                if post[0].id not in scoredict:
+                    qs.append(post[0])
+                    scoredict[post[0].id] = 20*post[1]
                 else:
-                    scoredict[post.id] += 20*matching_tags
+                    scoredict[post[0].id] += 20*post[1]
 
         qs = [post for post in sorted(qs, key=lambda i: scoredict[i.id], reverse=True)]
         #print(qs, scoredict)
