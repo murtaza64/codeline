@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Post(models.Model):
+    class Meta:
+        permissions = (
+            ('delete_any', 'Can delete any post'),
+            ('edit_any', 'Can edit any post')
+        )
     title = models.CharField(max_length=140)
     body = models.TextField()
     date = models.DateTimeField()

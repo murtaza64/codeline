@@ -11,7 +11,6 @@ urlpatterns = [
     url(r'^list/?$', views.PostListView.as_view(), name='list'),
     url(r'^(?P<pk>\d+)/?$', views.SinglePostView.as_view(), name='post'),
     url(r'^(?P<pk>\d+)/forks/?$', views.ForksView.as_view(), name='forks'),
-    #url(r'^test/', views.test, name = 'test'),
     url(r'^new/?$', views.NewPostView.as_view(), name='new'),
     url(r'^edit/(?P<pk>\d+)/?$', views.EditPostView.as_view(), name='edit'),
     url(r'^fork/(?P<pk>\d+)/?$', views.ForkPostView.as_view(), name='fork'),

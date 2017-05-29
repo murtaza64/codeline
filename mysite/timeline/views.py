@@ -17,7 +17,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django.db.models.query import QuerySet
 from django.db.models import Count
 from markdown2 import markdown
-from timeline.models import Post, Tag
+from timeline.models import Post, Tag # models must be imported so they can be used
 
 
 def assemble_post(post, request):
@@ -71,6 +71,8 @@ class JSONPostViewMixin(TemplateResponseMixin):
             d['model'] = 'timeline.post'
             fields = {}
             fields['author_logged_in'] = self.request.user == p.author
+            fields['edit_any'] = self.request.user.has_perm('timeline.edit_any')
+            fields['delete_any'] = self.request.user.has_perm('timeline.delete_any')
             fields['id'] = p.id
             fields['title'] = p.title
             if p.author is not None:
@@ -108,8 +110,8 @@ class PostListView(JSONPostViewMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(PostListView, self).get_context_data(**kwargs)
         context['posts'] = [assemble_post(post, self.request) for post in context['object_list']]
-        #context['posts'] = [p for p in context['posts'] if 
-            #not(p['private']) or p['author'] is self.request.user]
+        context['edit_any'] = self.request.user.has_perm('timeline.edit_any')
+        context['delete_any'] = self.request.user.has_perm('timeline.delete_any')
         return context
 
 
@@ -135,6 +137,8 @@ class SinglePostView(JSONPostViewMixin, DetailView):
         context['object_list'] = [context['object']]
         context['subtitle'] = '/' + str(context['post']['id'])
         context['title'] = '{} | codeline'.format(context['post']['title'])
+        context['edit_any'] = self.request.user.has_perm('timeline.edit_any')
+        context['delete_any'] = self.request.user.has_perm('timeline.delete_any')
         return context
 
 
@@ -266,7 +270,7 @@ class FilterTimelineView(PostListView):
         return qs
 
 class NewPostView(TemplateView):
-    template_name = 'timeline/new.html'
+
 
     def get_context_data(self, **kwargs):
         context = super(NewPostView, self).get_context_data(**kwargs)
@@ -274,14 +278,11 @@ class NewPostView(TemplateView):
         context['title'] = 'new post | codeline'
         return context
 
-    def update_post(self, request, post):
+    def update_post(self, request, post, author=None):
         postdict = json.loads(str(request.body, 'utf-8'))
         try:
-            if not post.author:
-                if request.user.is_authenticated and not postdict['anonymous']:
-                    post.author = request.user
-                else:
-                    post.author = None
+            if author is not None:
+                post.author = author
             post.title = postdict['title']
             post.last_updated = datetime.datetime.now()
             if not post.date:
@@ -315,16 +316,16 @@ class NewPostView(TemplateView):
     def post(self, request, *args, **kwargs):
         newpost = Post()
         # print(request.body)
-        status = self.update_post(request, newpost)
-        if status[0]:
+        success, message, post_id = self.update_post(request, newpost, request.user)
+        if success:
             return JsonResponse(dict(
                 success=True, 
                 message = 'post created', 
-                link='http://'+request.get_host()+'/'+str(status[2])
+                link='http://'+request.get_host()+'/'+str(post_id)
             ))
         else:
             newpost.delete()
-            return JsonResponse(dict(success=False, message=status[1]))
+            return JsonResponse(dict(success=False, message=message))
 
 class ForkPostView(NewPostView, SingleObjectMixin):
     template_name = 'timeline/fork.html'
@@ -359,18 +360,18 @@ class ForkPostView(NewPostView, SingleObjectMixin):
 
     def post(self, request, *args, **kwargs):
         newpost = Post()
-        status = self.update_post(request, newpost)
+        success, message, post_id = self.update_post(request, newpost, request.user)
         newpost.parent = self.get_object()
         newpost.save()
-        if status[0]:
+        if success:
             return JsonResponse(dict(
                 success=True, 
                 message='post forked', 
-                link='http://'+request.get_host()+'/'+str(status[2])
+                link='http://'+request.get_host()+'/'+str(post_id)
             ))
         else:
             newpost.delete()
-            return JsonResponse(dict(success=False, message=status[1]))
+            return JsonResponse(dict(success=False, message=message))
 
 class EditPostView(ForkPostView):
     template_name = 'timeline/edit.html'
@@ -383,7 +384,8 @@ class EditPostView(ForkPostView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if request.user.is_authenticated and self.object.author == request.user:
+        if ((request.user.is_authenticated and self.object.author == request.user)
+                or request.user.has_perm('timeline.edit_any')):
             response = super().get(request, *args, **kwargs)
             return response
         else:
@@ -391,20 +393,25 @@ class EditPostView(ForkPostView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if not request.user.is_authenticated or self.object.author != request.user:
+        if ((not request.user.is_authenticated or self.object.author != request.user) 
+                and not request.user.has_perm('timeline.edit_any')):
             return JsonResponse(dict(success=False, message='User not authenticated'))
         else:
-            status = self.update_post(request, self.object)
+            if request.user == self.object.author:
+                author = request.user
+            else:
+                author = None
+            success, message, post_id = self.update_post(request, self.object, author)
             self.object.edited = True
             self.object.save()
-            if status[0]:
+            if success:
                 return JsonResponse(dict(
                     success=True, 
                     message='post updated', 
-                    link='http://'+request.get_host()+'/'+str(status[2])
+                    link='http://'+request.get_host()+'/'+str(post_id)
                 ))
             else:
-                return JsonResponse(dict(success=False, message=status[1]))
+                return JsonResponse(dict(success=False, message=message))
 
 def live_view(request):
     return render(request, 'timeline/live.html', {
@@ -435,7 +442,8 @@ def delete_view(request, pk=None):
     if pk is None or not request.user.is_authenticated:
         return redirect('/')
     post = get_object_or_404(Post, pk=pk)
-    if request.user == post.author:
+    if (request.user == post.author
+            or request.user.has_perm('timeline.delete_any')):
         post.delete()
         return redirect(reverse('timeline:user', kwargs={'usr': request.user.username}))
     else:

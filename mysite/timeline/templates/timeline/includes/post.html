@@ -20,12 +20,12 @@
     {% endfor %}
   </p>
   <div style="height: 48px;">
-    {% if post.author_logged_in %}
+    {% if post.author_logged_in or edit_any %}
     <a href='/edit/{{post.id}}'><div class="action_link green">edit</div></a>
     {% endif %}
     <a href='/fork/{{post.id}}'><div class="action_link green">fork</div></a>
     <a href='/{{post.id}}/forks'><div class="action_link">view forks</div></a>
-    {% if post.author_logged_in %}
+    {% if post.author_logged_in or delete_any %}
     <a href='/delete/{{post.id}}'><div class="action_link red">delete</div></a>
     {% endif %}
   </div>

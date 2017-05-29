@@ -23,12 +23,21 @@
   <div style="height: 48px;">
     {{#if author_logged_in}}
     <a href='/edit/{{id}}'><div class="action_link green">edit</div></a>
+    {{else}}
+    {{#if edit_any}}
+    <a href='/edit/{{id}}'><div class="action_link green">edit</div></a>
+    {{/if}}
     {{/if}}
     <a href='/fork/{{id}}'><div class="action_link green">fork</div></a>
     <a href='/{{id}}/forks'><div class="action_link">view forks</div></a>
     {{#if author_logged_in }}
     <a href='/delete/{{id}}'><div class="action_link red">delete</div></a>
+    {{else}}
+    {{#if delete_any }}
+    <a href='/delete/{{id}}'><div class="action_link red">delete</div></a>
     {{/if}}
+    {{/if}}
+    
   </div>
 
   {{#each body.cells as |cell i|}}
