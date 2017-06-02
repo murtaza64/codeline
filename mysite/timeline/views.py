@@ -270,7 +270,7 @@ class FilterTimelineView(PostListView):
         return qs
 
 class NewPostView(TemplateView):
-
+    template_name = 'timeline/new.html'
 
     def get_context_data(self, **kwargs):
         context = super(NewPostView, self).get_context_data(**kwargs)
@@ -385,7 +385,7 @@ class EditPostView(ForkPostView):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         if ((request.user.is_authenticated and self.object.author == request.user)
-                or request.user.has_perm('timeline.edit_any')):
+                or (request.user.is_authenticated and request.user.has_perm('timeline.edit_any'))):
             response = super().get(request, *args, **kwargs)
             return response
         else:
