@@ -316,7 +316,8 @@ class NewPostView(TemplateView):
     def post(self, request, *args, **kwargs):
         newpost = Post()
         # print(request.body)
-        success, message, post_id = self.update_post(request, newpost, request.user)
+        author = request.user if request.user.is_authenticated else None
+        success, message, post_id = self.update_post(request, newpost, author)
         if success:
             return JsonResponse(dict(
                 success=True, 
@@ -360,7 +361,8 @@ class ForkPostView(NewPostView, SingleObjectMixin):
 
     def post(self, request, *args, **kwargs):
         newpost = Post()
-        success, message, post_id = self.update_post(request, newpost, request.user)
+        author = request.user if request.user.is_authenticated else None
+        success, message, post_id = self.update_post(request, newpost, author)
         newpost.parent = self.get_object()
         newpost.save()
         if success:
