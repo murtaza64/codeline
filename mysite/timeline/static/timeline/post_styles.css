@@ -11,9 +11,17 @@
   border-color:#bbbbbb;
 }
 
-.container-fluid.post{
-  /*border-left: 1px solid #d8d8d8;*/
-  /*border-bottom: 1px solid #d8d8d8;*/
+.post{
+  overflow: hidden;
+}
+.postextender{
+  padding: 3px;
+  background-color: #dddddd;
+  display: none;
+  border: 1px solid #aaaaaa;
+  align-items: center;
+  justify-content:center;
+  width: 100%;
 }
 pre.codecell{
   border:1px solid #bbbbbb;

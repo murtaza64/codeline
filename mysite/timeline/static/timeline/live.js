@@ -87,7 +87,16 @@ function extend_page(){
             //console.log(data);
             for (var i = 0; i < data.data.length; i++){
                 //console.log(data.data[i]);
-                $('#posts').append(post_template(data.data[i].fields));
+                post = post_template(data.data[i].fields)
+                $('#posts').append(post);
+                postElems = $(".post")
+                postElement = postElems[postElems.length-1]
+                extender = $(".postextender")[$(".postextender").length-1]
+                postheight = window.innerHeight*0.5 < 150 ? 150 : window.innerHeight*0.5
+                if(postElement.scrollHeight > postheight){
+                    $(postElement).css("max-height", postheight)
+                    $(extender).css("display", "flex")
+                }
                 if (!rehighlighting){
                     rehighlight()
                     rehighlight_timer = setInterval(rehighlight, 1500);
@@ -96,6 +105,7 @@ function extend_page(){
             }
             //$('#posts').append('<br><br>');
             next_page++;
+            $(".postextender").click(extendpost);
             loading_page_end();
         },
         error: function(jqXHR, status, error){
@@ -129,6 +139,12 @@ function ScrollHandler(e) { //from geo1701 on StackOverflow
     }, 100);
 }
 
+function extendpost(){
+    i = $(".postextender").index(this);
+    $($(".post")[i]).css("max-height", "none");
+    $(this).css("display", "none")
+}
+
 $(function(){
     $content = $("#content_col");
     $content_row = $("#content_row");
@@ -141,6 +157,7 @@ $(function(){
         //console.log(e)
     });
     $("#filter_go").click(filter);
+    
     Handlebars.registerHelper('easydate', function(options){
         return options.fn(this).substring(0,10); 
     }) //this might be the HACKiest thing I've ever written
