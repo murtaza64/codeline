@@ -22,7 +22,13 @@
   align-items: center;
   justify-content:center;
   width: 100%;
+  transition: .2s;
 }
+
+.postextender:hover{
+  background-color: #e0e0e0;
+}
+
 pre.codecell{
   border:1px solid #bbbbbb;
   border-radius:3px;
