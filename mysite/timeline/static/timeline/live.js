@@ -93,7 +93,7 @@ function extend_page(){
                 postElement = postElems[postElems.length-1]
                 extender = $(".postextender")[$(".postextender").length-1]
                 postheight = window.innerHeight*0.5 < 150 ? 150 : window.innerHeight*0.5
-                if(postElement.scrollHeight > postheight+20){
+                if(postElement.scrollHeight > (postheight+20)){
                     $(postElement).css("max-height", postheight)
                     $(extender).css("display", "flex")
                 }
