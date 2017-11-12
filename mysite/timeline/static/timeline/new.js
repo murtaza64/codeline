@@ -256,6 +256,7 @@ $(function(){
         else{
           statusupdate(data.message);
           statusupdate("<a href='"+data.link+"'>"+data.link+"</a>");
+          location.href = data.link;
         }
       },
       error: function(){
