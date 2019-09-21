@@ -6,7 +6,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core import serializers
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import redirect, render, get_object_or_404
